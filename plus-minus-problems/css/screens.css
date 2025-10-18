@@ -3,7 +3,6 @@
 /* Базовые стили для всех экранов */
 .screen {
     display: none;
-    min-height: 100vh;
     transition: all 0.3s ease;
 }
 
@@ -17,17 +16,17 @@
 
 /* Стили для экрана настроек */
 #settings-screen {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: transparent;
+    color: #fff;
 }
 
 #settings-screen .container {
-    background: rgba(255, 255, 255, 0.95);
-    color: #333;
+    background: transparent;
+    color: #fff;
 }
 
 #settings-screen .setting-group label {
-    color: #555;
+    color: #fff;
 }
 
 #settings-screen .setting-group input {
@@ -40,41 +39,41 @@
 }
 
 #settings-screen .radio-option {
-    background: white;
+    background: transparent;
     border-color: #ddd;
 }
 
 #settings-screen .radio-option:hover {
     border-color: #667eea;
-    background-color: #f8f9ff;
+    background-color: transparent;
 }
 
 /* Стили для игрового экрана */
 #game-screen {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    color: white;
+    background: transparent;
+    color: #fff;
 }
 
 #game-screen .container {
-    background: rgba(255, 255, 255, 0.95);
-    color: #333;
+    background: transparent;
+    color: #fff;
 }
 
 #game-screen .progress {
-    color: #666;
+    color: #fff;
     font-weight: bold;
 }
 
 #game-screen .score {
-    color: #4CAF50;
+    color: #fff;
 }
 
 #game-screen .timer {
-    color: #2196F3;
+    color: #fff;
 }
 
 #game-screen #exampleText {
-    color: #333;
+    color: #fff;
 }
 
 #game-screen #answerInput {
@@ -88,83 +87,83 @@
 
 /* Стили для экрана результатов */
 #results-screen {
-    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-    color: white;
+    background: transparent;
+    color: #fff;
 }
 
 #results-screen .container {
-    background: rgba(255, 255, 255, 0.95);
-    color: #333;
+    background: transparent;
+    color: #fff;
 }
 
 #results-screen .final-score {
-    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
-    color: #333;
+    background: transparent;
+    color: #fff;
 }
 
 #results-screen .final-time {
-    background: linear-gradient(45deg, #e3f2fd, #bbdefb);
-    color: #2196F3;
+    background: transparent;
+    color: #fff;
 }
 
 #results-screen .wrong-examples li {
-    background: #ffebee;
+    background: transparent;
     border-color: #f44336;
-    color: #d32f2f;
+    color: #fff;
 }
 
 /* Стили для экрана статистики */
 #stats-screen {
-    background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
-    color: white;
+    background: transparent;
+    color: #fff;
 }
 
 #stats-screen .container {
-    background: rgba(255, 255, 255, 0.95);
-    color: #333;
+    background: transparent;
+    color: #fff;
 }
 
 #stats-screen .stat-item {
-    background: #f8f9fa;
+    background: transparent;
     border-color: #e9ecef;
 }
 
 #stats-screen .stat-label {
-    color: #666;
+    color: #fff;
 }
 
 #stats-screen .stat-value {
-    color: #333;
+    color: #fff;
 }
 
 #stats-screen .progress-label {
-    color: #666;
+    color: #fff;
 }
 
 #stats-screen .progress-text {
-    color: #666;
+    color: #fff;
 }
 
 #stats-screen .recent-games li {
-    background: #f8f9fa;
+    background: transparent;
     border-color: #e9ecef;
 }
 
 #stats-screen .game-date {
-    color: #666;
+    color: #fff;
 }
 
 #stats-screen .game-score {
-    color: #333;
+    color: #fff;
 }
 
 #stats-screen .game-time {
-    color: #666;
+    color: #fff;
 }
 
 #stats-screen .game-type {
-    color: #999;
-    background: #e9ecef;
+    color: #fff;
+    background: transparent;
 }
 
 /* Специальные сообщения */
@@ -233,19 +232,6 @@
     }
 }
 
-/* Темная тема (опционально) */
-@media (prefers-color-scheme: dark) {
-    .screen-content {
-        background: rgba(0, 0, 0, 0.1);
-    }
-    
-    #settings-screen .container,
-    #game-screen .container,
-    #results-screen .container,
-    #stats-screen .container {
-        background: rgba(255, 255, 255, 0.9);
-    }
-}
 
 /* Высокий контраст */
 @media (prefers-contrast: high) {

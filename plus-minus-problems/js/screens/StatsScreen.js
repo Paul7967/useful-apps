@@ -137,7 +137,6 @@ class StatsScreen extends BaseScreen {
             `;
             
             li.style.cssText = `
-                background: #f5f5f5;
                 border: 1px solid #ddd;
                 border-radius: 8px;
                 padding: 10px;

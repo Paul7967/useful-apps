@@ -27,6 +27,36 @@
 
 .header-left {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Название приложения */
+.app-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.app-icon {
+    font-size: 1.3em;
+    transition: transform 0.3s ease;
+}
+
+.app-title:hover .app-icon {
+    transform: scale(1.1);
+}
+
+.app-name {
+    white-space: normal;
+    line-height: 1.2;
+    text-align: center;
 }
 
 .header-right {
@@ -205,6 +235,20 @@
         gap: 10px;
     }
     
+    .header-left {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .app-title {
+        font-size: 1.1em;
+    }
+    
+    .app-name {
+        display: none; /* Скрываем название на планшетах, оставляем только иконку */
+    }
+    
     .main-nav {
         flex-wrap: wrap;
         justify-content: center;
@@ -231,6 +275,10 @@
         padding: 8px 10px;
     }
     
+    .app-title {
+        font-size: 1em;
+    }
+    
     .nav-btn {
         padding: 6px 10px;
         font-size: 0.7em;
@@ -242,36 +290,6 @@
     }
 }
 
-/* Темная тема для Header */
-@media (prefers-color-scheme: dark) {
-    .app-header {
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-        border-bottom-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .nav-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .nav-btn.active {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .user-info {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .user-info:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-}
 
 /* Высокий контраст для Header */
 @media (prefers-contrast: high) {
