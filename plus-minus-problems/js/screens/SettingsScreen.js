@@ -19,10 +19,26 @@ class SettingsScreen extends BaseScreen {
             this.startGame();
         });
 
-        // Автосохранение при изменении полей
+        // Обработка выбора игрока из select
+        this.addEventListener('playerNameSelect', 'change', () => {
+            this.handlePlayerSelectChange();
+        });
+
+        // Обработка ввода нового имени
         this.addEventListener('playerNameInput', 'input', () => {
             this.updatePlayerName();
             this.savePlayerName();
+        });
+
+        // Обработка завершения ввода нового игрока
+        this.addEventListener('playerNameInput', 'blur', () => {
+            this.handleNewPlayerInput();
+        });
+
+        this.addEventListener('playerNameInput', 'keydown', (e) => {
+            if (e.key === 'Enter') {
+                this.handleNewPlayerInput();
+            }
         });
 
         this.addEventListener('maxNumber', 'change', () => {
@@ -67,6 +83,14 @@ class SettingsScreen extends BaseScreen {
         // Загружаем имя игрока
         const playerName = this.storageService.loadPlayerName();
         this.setValue('playerNameInput', playerName);
+        
+        // Обновляем select с игроками
+        this.updatePlayerSelect();
+        
+        // Восстанавливаем выбранного игрока (после обновления списка)
+        setTimeout(() => {
+            this.restoreSelectedPlayer(playerName);
+        }, 0);
         
         // Загружаем настройки игры
         const settings = this.storageService.loadGameSettings();
@@ -229,5 +253,134 @@ class SettingsScreen extends BaseScreen {
         this.setSettings(defaultSettings);
         this.saveGameSettings();
         console.log('🔄 [SettingsScreen] Настройки сброшены к значениям по умолчанию');
+    }
+
+    /**
+     * Обновить select с игроками
+     */
+    updatePlayerSelect() {
+        const select = this.getElement('playerNameSelect');
+        if (!select) return;
+        
+        const allPlayers = this.storageService.getAllPlayers();
+        
+        // Очищаем существующие опции (кроме первой: "добавить нового")
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+        
+        // Добавляем опции для каждого игрока
+        allPlayers.forEach(player => {
+            const option = document.createElement('option');
+            option.value = player;
+            option.textContent = player;
+            select.appendChild(option);
+        });
+        
+        console.log('👥 [SettingsScreen] Select обновлен с', allPlayers.length, 'игроками');
+        console.log('👥 [SettingsScreen] Список игроков:', allPlayers);
+        console.log('👥 [SettingsScreen] Опции в select:', Array.from(select.children).map(opt => opt.textContent));
+    }
+
+    /**
+     * Обработка изменения выбора в select
+     */
+    handlePlayerSelectChange() {
+        const select = this.getElement('playerNameSelect');
+        const input = this.getElement('playerNameInput');
+        
+        if (!select || !input) return;
+        
+        const selectedValue = select.value;
+        
+        if (selectedValue === '__NEW_PLAYER__') {
+            // Показать поле ввода для нового игрока
+            input.style.display = 'block';
+            input.focus();
+            input.value = ''; // Очищаем поле
+            console.log('👤 [SettingsScreen] Режим добавления нового игрока');
+        } else {
+            // Скрыть поле ввода и установить выбранного игрока
+            input.style.display = 'none';
+            this.setValue('playerNameInput', selectedValue);
+            this.updatePlayerName();
+            this.savePlayerName();
+            
+            // Сохраняем выбор в localStorage
+            this.storageService.savePlayerName(selectedValue);
+            console.log('👤 [SettingsScreen] Выбран и сохранен игрок:', selectedValue);
+        }
+    }
+
+    /**
+     * Обработка ввода нового игрока
+     */
+    handleNewPlayerInput() {
+        const input = this.getElement('playerNameInput');
+        const select = this.getElement('playerNameSelect');
+        
+        if (!input || !select) return;
+        
+        const newPlayerName = input.value.trim();
+        
+        if (newPlayerName.length > 0) {
+            // Сохраняем нового игрока
+            this.storageService.savePlayerName(newPlayerName);
+            
+            // Обновляем внутреннее состояние
+            this.setValue('playerNameInput', newPlayerName);
+            this.updatePlayerName();
+            this.savePlayerName();
+            
+            // Обновляем список игроков в select
+            this.updatePlayerSelect();
+            
+            // Выбираем нового игрока в select
+            select.value = newPlayerName;
+            
+            // Скрываем поле ввода
+            input.style.display = 'none';
+            
+            console.log('👤 [SettingsScreen] Добавлен новый игрок:', newPlayerName);
+            console.log('👤 [SettingsScreen] Выбранное значение в select:', select.value);
+            console.log('👤 [SettingsScreen] Опции после добавления:', Array.from(select.children).map(opt => opt.textContent));
+        } else {
+            // Если имя пустое, возвращаемся к опции добавления
+            select.value = '__NEW_PLAYER__';
+            input.style.display = 'none';
+            console.log('👤 [SettingsScreen] Отменен ввод нового игрока');
+        }
+    }
+
+    /**
+     * Восстановить выбранного игрока при загрузке
+     */
+    restoreSelectedPlayer(playerName) {
+        const select = this.getElement('playerNameSelect');
+        if (!select) return;
+        
+        console.log('👤 [SettingsScreen] Восстановление игрока:', playerName);
+        
+        if (playerName && playerName.trim()) {
+            // Проверяем, есть ли такой игрок в списке
+            const allPlayers = this.storageService.getAllPlayers();
+            console.log('👤 [SettingsScreen] Доступные игроки:', allPlayers);
+            console.log('👤 [SettingsScreen] Опции в select:', Array.from(select.children).map(opt => opt.textContent));
+            
+            if (allPlayers.includes(playerName)) {
+                // Выбираем существующего игрока
+                select.value = playerName;
+                console.log('👤 [SettingsScreen] Восстановлен игрок:', playerName);
+                console.log('👤 [SettingsScreen] Выбранное значение:', select.value);
+            } else {
+                // Если игрок не найден в списке, выбираем опцию добавления
+                select.value = '__NEW_PLAYER__';
+                console.log('👤 [SettingsScreen] Игрок не найден в списке, режим добавления');
+            }
+        } else {
+            // Если имя не задано, выбираем опцию добавления
+            select.value = '__NEW_PLAYER__';
+            console.log('👤 [SettingsScreen] Имя игрока не задано, режим добавления');
+        }
     }
 }

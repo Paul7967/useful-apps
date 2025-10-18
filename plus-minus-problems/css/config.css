@@ -84,8 +84,8 @@
   
   /* === СТАТИСТИКА === */
   --stat-grid-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Сетка статистики */
-  --stat-item-padding: 15px;       /* Отступы элементов статистики */
-  --stat-value-font-size: 1.5em;  /* Размер шрифта значений */
+  --stat-item-padding: 7px;       /* Отступы элементов статистики */
+  --stat-value-font-size: 1.2em;  /* Размер шрифта значений */
   
   /* === Z-INDEX === */
   --z-header: 1000;               /* Хедер */

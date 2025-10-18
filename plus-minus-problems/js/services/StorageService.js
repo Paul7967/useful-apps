@@ -224,6 +224,31 @@ class StorageService {
     }
 
     /**
+     * Получение списка всех игроков из истории
+     */
+    getAllPlayers() {
+        try {
+            const history = this.loadGameHistory();
+            const players = [...new Set(history.map(game => game.playerName))].filter(name => name && name.trim());
+            
+            // Добавляем текущего игрока из localStorage, если его нет в списке
+            const currentPlayer = this.loadPlayerName();
+            if (currentPlayer && currentPlayer.trim() && !players.includes(currentPlayer)) {
+                players.push(currentPlayer);
+                console.log('👥 [StorageService] Добавлен текущий игрок:', currentPlayer);
+            }
+            
+            players.sort();
+            console.log('👥 [StorageService] Найдено игроков:', players.length);
+            console.log('👥 [StorageService] Список игроков:', players);
+            return players;
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка получения списка игроков:', error);
+            return [];
+        }
+    }
+
+    /**
      * Очистка всех данных
      */
     clearAllData() {

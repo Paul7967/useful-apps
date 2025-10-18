@@ -48,8 +48,12 @@
                 <h2>Настройки</h2>
                 <div class="settings-grid">
                     <div class="setting-group">
-                        <label for="playerNameInput">Имя игрока:</label>
-                        <input type="text" id="playerNameInput" placeholder="Введите ваше имя" maxlength="20">
+                        <label for="playerNameSelect">Имя игрока:</label>
+                        <select id="playerNameSelect" name="playerName" title="Выберите игрока или добавьте нового">
+                            <option value="__NEW_PLAYER__"> + Новый игрок</option>
+                            <!-- Опции будут добавлены динамически -->
+                        </select>
+                        <input type="text" id="playerNameInput" placeholder="Введите имя нового игрока" maxlength="20" autocomplete="off" style="display: none;">
                     </div>
                     <div class="setting-group">
                         <label for="maxNumber">Максимальное число:</label>
@@ -174,7 +178,6 @@
                     <ul id="recentGamesList"></ul>
                 </div>
                 <div class="screen-buttons">
-                    <button id="backToSettings" class="btn btn-primary">К настройкам</button>
                     <button id="exportData" class="btn btn-secondary">Экспорт данных</button>
                     <button id="importData" class="btn btn-secondary">Импорт данных</button>
                     <button id="clearStats" class="btn btn-danger">Очистить статистику</button>

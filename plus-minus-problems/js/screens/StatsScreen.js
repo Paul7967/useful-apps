@@ -150,6 +150,7 @@ class StatsScreen extends BaseScreen {
                     <div class="game-score">${game.score}/${game.totalExamples} (${percentage}%)</div>
                     <div class="game-time">${gameTime}</div>
                     <div class="game-type">${this.getOperationTypeName(game.operationType)}</div>
+                    <div class="game-max-number">До ${game.maxNumber}</div>
                 </div>
             `;
             
@@ -205,7 +206,7 @@ class StatsScreen extends BaseScreen {
         const names = {
             'addition': 'Сложение',
             'subtraction': 'Вычитание',
-            'both': 'Смешанные'
+            'both': 'Сложение и вычитание'
         };
         return names[operationType] || operationType;
     }
