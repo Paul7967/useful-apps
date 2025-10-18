@@ -21,7 +21,7 @@ class ResultsScreen extends BaseScreen {
         });
 
         // Кнопка "Новая игра"
-        this.addEventListener('newGame', 'click', () => {
+        this.addEventListener('newGameFromResults', 'click', () => {
             this.newGame();
         });
 

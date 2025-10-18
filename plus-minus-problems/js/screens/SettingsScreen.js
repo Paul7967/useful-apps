@@ -165,13 +165,13 @@ class SettingsScreen extends BaseScreen {
             return;
         }
         
-        if (maxNumber > 100) {
-            alert('Максимальное число не должно превышать 100');
+        if (maxNumber > 500) {
+            alert('Максимальное число не должно превышать 500');
             return;
         }
         
-        if (examplesCount > 50) {
-            alert('Количество примеров не должно превышать 50');
+        if (examplesCount > 100) {
+            alert('Количество примеров не должно превышать 100');
             return;
         }
         
