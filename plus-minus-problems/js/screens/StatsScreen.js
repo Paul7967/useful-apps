@@ -91,6 +91,9 @@ class StatsScreen extends BaseScreen {
             this.setText('lastPlayed', 'Никогда');
         }
         
+        // Отображение статистики по дням
+        this.displayDailyStats();
+        
         // Отображение последних игр
         this.displayRecentGames();
         
@@ -125,47 +128,198 @@ class StatsScreen extends BaseScreen {
     }
 
     /**
-     * Отображение последних игр
+     * Отображение статистики по дням
      */
-    displayRecentGames() {
-        const recentGamesList = this.getElement('recentGamesList');
-        if (!recentGamesList || !this.statistics.recentGames) return;
+    displayDailyStats() {
+        const dailyStatsList = this.getElement('dailyStatsList');
+        if (!dailyStatsList || !this.statistics.recentGames) return;
         
-        recentGamesList.innerHTML = '';
+        dailyStatsList.innerHTML = '';
         
         if (this.statistics.recentGames.length === 0) {
-            recentGamesList.innerHTML = '<li>История игр пуста</li>';
+            dailyStatsList.innerHTML = '<div class="no-data">Нет данных для отображения</div>';
             return;
         }
         
-        this.statistics.recentGames.slice(-10).reverse().forEach(game => {
-            const li = document.createElement('li');
+        // Группируем игры по датам
+        const gamesByDate = {};
+        this.statistics.recentGames.forEach(game => {
+            const date = new Date(game.timestamp).toLocaleDateString('ru-RU');
+            if (!gamesByDate[date]) {
+                gamesByDate[date] = {
+                    games: [],
+                    totalExamples: 0,
+                    totalScore: 0,
+                    totalTime: 0
+                };
+            }
+            gamesByDate[date].games.push(game);
+            gamesByDate[date].totalExamples += game.totalExamples;
+            gamesByDate[date].totalScore += game.score;
+            gamesByDate[date].totalTime += game.time;
+        });
+        
+        // Сортируем даты по убыванию (новые сначала)
+        const sortedDates = Object.keys(gamesByDate).sort((a, b) => {
+            return new Date(b.split('.').reverse().join('-')) - new Date(a.split('.').reverse().join('-'));
+        });
+        
+        // Отображаем статистику по дням
+        sortedDates.forEach(date => {
+            const dayData = gamesByDate[date];
+            const dayContainer = document.createElement('div');
+            dayContainer.className = 'daily-stat-item';
+            
+            const percentage = Math.round((dayData.totalScore / dayData.totalExamples) * 100);
+            const avgTime = Math.round(dayData.totalTime / dayData.games.length);
+            
+            dayContainer.innerHTML = `
+                <div class="daily-stat-header">
+                    <div class="daily-date">${date}</div>
+                    <div class="daily-games-count">${dayData.games.length} игр</div>
+                </div>
+                <div class="daily-stat-details">
+                    <div class="daily-total-examples">Всего примеров: ${dayData.totalExamples}</div>
+                    <div class="daily-correct-answers">Правильных: ${dayData.totalScore} (${percentage}%)</div>
+                    <div class="daily-avg-time">Среднее время: ${this.formatTime(avgTime)}</div>
+                </div>
+            `;
+            
+            dayContainer.style.cssText = `
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 15px;
+                margin: 10px 0;
+                background: rgba(255, 255, 255, 0.1);
+            `;
+            
+            dailyStatsList.appendChild(dayContainer);
+        });
+    }
+
+    /**
+     * Создание таблицы истории игр
+     */
+    createGamesTable() {
+        const recentGamesSection = document.querySelector('.recent-games');
+        if (!recentGamesSection) return;
+        
+        // Удаляем существующую таблицу, если есть
+        const existingTable = recentGamesSection.querySelector('table');
+        if (existingTable) {
+            existingTable.remove();
+        }
+        
+        // Создаем новую таблицу
+        const table = document.createElement('table');
+        table.className = 'games-table';
+        
+        // Создаем заголовок таблицы
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>Дата</th>
+                <th>Результат</th>
+                <th>Время</th>
+                <th>Тип</th>
+                <th>Макс. число</th>
+                <th>Действие</th>
+            </tr>
+        `;
+        
+        // Создаем тело таблицы
+        const tbody = document.createElement('tbody');
+        tbody.id = 'gamesTableBody';
+        
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        
+        // Заменяем ul на table
+        const ul = recentGamesSection.querySelector('ul');
+        if (ul) {
+            recentGamesSection.replaceChild(table, ul);
+        } else {
+            recentGamesSection.appendChild(table);
+        }
+    }
+
+    /**
+     * Отображение последних игр
+     */
+    displayRecentGames() {
+        if (!this.statistics.recentGames) return;
+        
+        // Создаем таблицу
+        this.createGamesTable();
+        
+        const tbody = document.getElementById('gamesTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        if (this.statistics.recentGames.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="6" class="no-games">История игр пуста</td>';
+            tbody.appendChild(tr);
+            return;
+        }
+        
+        this.statistics.recentGames.slice().reverse().forEach(game => {
+            const tr = document.createElement('tr');
             const gameDate = new Date(game.timestamp).toLocaleDateString('ru-RU');
             const gameTime = this.formatTime(game.time);
             const percentage = Math.round((game.score / game.totalExamples) * 100);
             
-            li.innerHTML = `
-                <div class="game-item">
-                    <div class="game-date">${gameDate}</div>
-                    <div class="game-score">${game.score}/${game.totalExamples} (${percentage}%)</div>
-                    <div class="game-time">${gameTime}</div>
-                    <div class="game-type">${this.getOperationTypeName(game.operationType)}</div>
-                    <div class="game-max-number">До ${game.maxNumber}</div>
-                </div>
+            tr.innerHTML = `
+                <td>${gameDate}</td>
+                <td>${game.score}/${game.totalExamples} (${percentage}%)</td>
+                <td>${gameTime}</td>
+                <td>${this.getOperationTypeName(game.operationType)}</td>
+                <td>До ${game.maxNumber}</td>
+                <td><button class="delete-game-btn" data-game-id="${game.id}" title="Удалить игру">×</button></td>
             `;
             
-            li.style.cssText = `
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                padding: 10px;
-                margin: 5px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            `;
-            
-            recentGamesList.appendChild(li);
+            tbody.appendChild(tr);
         });
+        
+        // Добавляем обработчики для кнопок удаления
+        this.addDeleteGameListeners();
+    }
+
+    /**
+     * Добавление обработчиков для кнопок удаления игр
+     */
+    addDeleteGameListeners() {
+        const deleteButtons = document.querySelectorAll('.delete-game-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const gameId = parseInt(button.getAttribute('data-game-id'));
+                this.deleteGame(gameId);
+            });
+        });
+    }
+
+    /**
+     * Удаление игры из истории
+     */
+    deleteGame(gameId) {
+        if (confirm('Вы уверены, что хотите удалить эту игру из истории?')) {
+            console.log('🗑️ [StatsScreen] Удаление игры с ID:', gameId);
+            
+            // Удаляем игру из localStorage
+            const success = this.storageService.deleteGameById(gameId);
+            
+            if (success) {
+                // Перезагружаем статистику
+                this.loadStatistics();
+                this.displayStatistics();
+                console.log('✅ [StatsScreen] Игра успешно удалена');
+            } else {
+                console.error('❌ [StatsScreen] Ошибка при удалении игры');
+                alert('Ошибка при удалении игры');
+            }
+        }
     }
 
     /**

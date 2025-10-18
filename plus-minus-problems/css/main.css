@@ -643,6 +643,155 @@ h3 {
     border-radius: 4px;
 }
 
+/* Статистика по дням */
+.daily-stats {
+    margin: 20px 0;
+}
+
+.daily-stats h3 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.daily-stat-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.daily-stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 8px;
+}
+
+.daily-date {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fff;
+}
+
+.daily-games-count {
+    font-size: 0.9em;
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.daily-stat-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.daily-total-examples,
+.daily-correct-answers,
+.daily-avg-time {
+    font-size: 0.9em;
+    color: #fff;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    text-align: center;
+}
+
+.no-data {
+    text-align: center;
+    color: #ccc;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Таблица истории игр */
+.games-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.games-table th {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 0.9em;
+    border-bottom: 2px solid #ddd;
+}
+
+.games-table td {
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.games-table tr:last-child td {
+    border-bottom: none;
+}
+
+.games-table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.games-table tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.games-table tr:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.games-table tr:hover td {
+    background: transparent;
+}
+
+.no-games {
+    text-align: center;
+    color: #ccc;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Кнопка удаления игры */
+.delete-game-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin: 0 auto;
+}
+
+.delete-game-btn:hover {
+    background: #d32f2f;
+    transform: scale(1.1);
+}
+
+.delete-game-btn:active {
+    transform: scale(0.95);
+}
+
 /* Футер */
 .footer {
     position: fixed;

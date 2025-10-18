@@ -181,7 +181,7 @@ class StorageService {
             perfectGames,
             lastPlayed,
             playerName: playerName,
-            recentGames: playerHistory.slice(-10) // Последние 10 игр текущего игрока
+            recentGames: playerHistory // Все игры текущего игрока
         };
 
         console.log('📊 [StorageService] Статистика игрока', playerName, ':', statistics);
@@ -312,6 +312,35 @@ class StorageService {
             return true;
         } catch (error) {
             console.error('❌ [StorageService] Ошибка импорта данных:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Удаление игры по ID
+     */
+    deleteGameById(gameId) {
+        try {
+            const history = this.loadGameHistory();
+            const initialLength = history.length;
+            
+            // Фильтруем игры, исключая игру с указанным ID
+            const filteredHistory = history.filter(game => game.id !== gameId);
+            
+            if (filteredHistory.length === initialLength) {
+                console.log('⚠️ [StorageService] Игра с ID', gameId, 'не найдена');
+                return false;
+            }
+            
+            // Сохраняем обновленную историю
+            localStorage.setItem(this.keys.gameHistory, JSON.stringify(filteredHistory));
+            
+            console.log('🗑️ [StorageService] Игра с ID', gameId, 'удалена');
+            console.log('📊 [StorageService] Игр в истории:', filteredHistory.length, 'из', initialLength);
+            
+            return true;
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка удаления игры:', error);
             return false;
         }
     }

@@ -57,11 +57,11 @@
                     </div>
                     <div class="setting-group">
                         <label for="maxNumber">Максимальное число:</label>
-                        <input type="number" id="maxNumber" min="1" max="100" value="10">
+                        <input type="number" id="maxNumber" min="1" max="500" value="10">
                     </div>
                     <div class="setting-group">
                         <label for="examplesCount">Количество примеров:</label>
-                        <input type="number" id="examplesCount" min="1" max="50" value="5">
+                        <input type="number" id="examplesCount" min="1" max="100" value="5">
                     </div>
                     <div class="setting-group operation-group">
                         <label>Тип действий:</label>
@@ -173,6 +173,10 @@
                     </div>
                 </div>
                 <div id="progressContainer" class="progress-container"></div>
+                <div class="daily-stats">
+                    <h3>Статистика по дням</h3>
+                    <div id="dailyStatsList"></div>
+                </div>
                 <div class="recent-games">
                     <h3>Последние игры</h3>
                     <ul id="recentGamesList"></ul>
