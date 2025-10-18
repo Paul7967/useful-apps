@@ -52,8 +52,9 @@ class StatsScreen extends BaseScreen {
      */
     loadStatistics() {
         console.log('📈 [StatsScreen] Загрузка статистики');
-        this.statistics = this.storageService.getPlayerStatistics();
-        console.log('📈 [StatsScreen] Статистика загружена:', this.statistics);
+        const currentPlayer = this.storageService.loadPlayerName();
+        this.statistics = this.storageService.getPlayerStatistics(currentPlayer);
+        console.log('📈 [StatsScreen] Статистика загружена для игрока', currentPlayer, ':', this.statistics);
     }
 
     /**
@@ -67,6 +68,13 @@ class StatsScreen extends BaseScreen {
         }
 
         console.log('📈 [StatsScreen] Отображение статистики');
+        
+        // Обновляем заголовок с именем игрока
+        const playerName = this.statistics.playerName || 'Игрок';
+        const headerElement = this.element.querySelector('h2');
+        if (headerElement) {
+            headerElement.textContent = `Статистика игрока: ${playerName}`;
+        }
         
         // Основная статистика
         this.setText('totalGames', this.statistics.totalGames);
@@ -94,6 +102,15 @@ class StatsScreen extends BaseScreen {
      * Отображение пустой статистики
      */
     displayEmptyStats() {
+        const currentPlayer = this.storageService.loadPlayerName();
+        const playerName = currentPlayer || 'Игрок';
+        
+        // Обновляем заголовок с именем игрока
+        const headerElement = this.element.querySelector('h2');
+        if (headerElement) {
+            headerElement.textContent = `Статистика игрока: ${playerName}`;
+        }
+        
         this.setText('totalGames', '0');
         this.setText('bestScore', '0');
         this.setText('averageScore', '0');
@@ -103,7 +120,7 @@ class StatsScreen extends BaseScreen {
         
         const recentGamesList = this.getElement('recentGamesList');
         if (recentGamesList) {
-            recentGamesList.innerHTML = '<li>История игр пуста</li>';
+            recentGamesList.innerHTML = `<li>У игрока "${playerName}" пока нет игр</li>`;
         }
     }
 
@@ -205,12 +222,13 @@ class StatsScreen extends BaseScreen {
      * Очистка статистики
      */
     clearStatistics() {
-        if (confirm('Вы уверены, что хотите удалить всю статистику? Это действие нельзя отменить.')) {
-            this.storageService.clearAllData();
-            alert('Статистика удалена');
+        const currentPlayer = this.storageService.loadPlayerName();
+        if (confirm(`Вы уверены, что хотите удалить статистику игрока "${currentPlayer}"? Это действие нельзя отменить.`)) {
+            this.storageService.clearPlayerStatistics(currentPlayer);
+            alert(`Статистика игрока "${currentPlayer}" удалена`);
             this.loadStatistics();
             this.displayStatistics();
-            console.log('🗑️ [StatsScreen] Статистика очищена');
+            console.log('🗑️ [StatsScreen] Статистика игрока', currentPlayer, 'очищена');
         }
     }
 

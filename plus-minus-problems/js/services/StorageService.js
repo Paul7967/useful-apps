@@ -137,10 +137,18 @@ class StorageService {
     /**
      * Получение статистики игрока
      */
-    getPlayerStatistics() {
+    getPlayerStatistics(playerName = null) {
         const history = this.loadGameHistory();
         
-        if (history.length === 0) {
+        // Если имя игрока не передано, получаем текущее имя
+        if (!playerName) {
+            playerName = this.loadPlayerName();
+        }
+        
+        // Фильтруем историю по имени игрока
+        const playerHistory = history.filter(game => game.playerName === playerName);
+        
+        if (playerHistory.length === 0) {
             return {
                 totalGames: 0,
                 bestScore: 0,
@@ -148,20 +156,21 @@ class StorageService {
                 totalTime: 0,
                 averageTime: 0,
                 perfectGames: 0,
-                lastPlayed: null
+                lastPlayed: null,
+                playerName: playerName
             };
         }
 
-        const totalGames = history.length;
-        const scores = history.map(game => game.score);
-        const times = history.map(game => game.time);
+        const totalGames = playerHistory.length;
+        const scores = playerHistory.map(game => game.score);
+        const times = playerHistory.map(game => game.time);
         
         const bestScore = Math.max(...scores);
         const averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / totalGames);
         const totalTime = times.reduce((a, b) => a + b, 0);
         const averageTime = Math.round(totalTime / totalGames);
-        const perfectGames = scores.filter(score => score === history[0].totalExamples).length;
-        const lastPlayed = history[history.length - 1].timestamp;
+        const perfectGames = scores.filter(score => score === playerHistory[0].totalExamples).length;
+        const lastPlayed = playerHistory[playerHistory.length - 1].timestamp;
 
         const statistics = {
             totalGames,
@@ -171,10 +180,11 @@ class StorageService {
             averageTime,
             perfectGames,
             lastPlayed,
-            recentGames: history.slice(-10) // Последние 10 игр
+            playerName: playerName,
+            recentGames: playerHistory.slice(-10) // Последние 10 игр текущего игрока
         };
 
-        console.log('📊 [StorageService] Статистика игрока:', statistics);
+        console.log('📊 [StorageService] Статистика игрока', playerName, ':', statistics);
         return statistics;
     }
 
@@ -188,6 +198,27 @@ class StorageService {
             return true;
         } catch (error) {
             console.error('❌ [StorageService] Ошибка очистки истории игр:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Очистка статистики конкретного игрока
+     */
+    clearPlayerStatistics(playerName = null) {
+        try {
+            if (!playerName) {
+                playerName = this.loadPlayerName();
+            }
+            
+            const history = this.loadGameHistory();
+            const filteredHistory = history.filter(game => game.playerName !== playerName);
+            
+            localStorage.setItem(this.keys.gameHistory, JSON.stringify(filteredHistory));
+            console.log('🗑️ [StorageService] Статистика игрока', playerName, 'очищена');
+            return true;
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка очистки статистики игрока:', error);
             return false;
         }
     }
@@ -213,16 +244,19 @@ class StorageService {
      */
     exportData() {
         try {
+            const currentPlayer = this.loadPlayerName();
+            const playerHistory = this.loadGameHistory().filter(game => game.playerName === currentPlayer);
+            
             const data = {
-                playerName: this.loadPlayerName(),
+                playerName: currentPlayer,
                 settings: this.loadGameSettings(),
-                gameHistory: this.loadGameHistory(),
-                statistics: this.getPlayerStatistics(),
+                gameHistory: playerHistory,
+                statistics: this.getPlayerStatistics(currentPlayer),
                 exportDate: new Date().toISOString()
             };
             
             const dataStr = JSON.stringify(data, null, 2);
-            console.log('📤 [StorageService] Данные экспортированы');
+            console.log('📤 [StorageService] Данные игрока', currentPlayer, 'экспортированы');
             return dataStr;
         } catch (error) {
             console.error('❌ [StorageService] Ошибка экспорта данных:', error);
