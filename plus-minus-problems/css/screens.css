@@ -3,7 +3,7 @@
 /* Базовые стили для всех экранов */
 .screen {
     display: none;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .screen.active {
@@ -11,22 +11,22 @@
 }
 
 .screen-content {
-    padding: 20px;
+    padding: var(--spacing-md);
 }
 
 /* Стили для экрана настроек */
 #settings-screen {
-    background: transparent;
-    color: #fff;
+    background: var(--bg-container);
+    color: var(--text-primary);
 }
 
 #settings-screen .container {
-    background: transparent;
-    color: #fff;
+    background: var(--bg-container);
+    color: var(--text-primary);
 }
 
 #settings-screen .setting-group label {
-    color: #fff;
+    color: var(--text-primary);
 }
 
 #settings-screen .setting-group input {

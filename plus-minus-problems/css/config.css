@@ -1,0 +1,201 @@
+/* Конфигурация приложения "Сложение и вычитание" */
+:root {
+  /* === ОСНОВНАЯ ЦВЕТОВАЯ СХЕМА === */
+  --app-primary: #667eea;           /* Основной синий цвет */
+  --app-secondary: #764ba2;         /* Дополнительный фиолетовый */
+  --app-success: #4CAF50;          /* Зеленый для успеха */
+  --app-success-dark: #45a049;     /* Темно-зеленый */
+  --app-info: #2196F3;             /* Синий для информации */
+  --app-warning: #FF9800;          /* Оранжевый для предупреждений */
+  --app-danger: #f44336;           /* Красный для ошибок */
+  --app-danger-dark: #d32f2f;      /* Темно-красный */
+  
+  /* === ТЕКСТ === */
+  --text-primary: #ffffff;         /* Основной белый текст */
+  --text-secondary: #f0f0f0;       /* Вторичный светлый текст */
+  --text-muted: #cccccc;           /* Приглушенный текст */
+  --text-dark: #333333;            /* Темный текст (если нужен) */
+  
+  /* === ФОНЫ === */
+  --bg-primary: linear-gradient(135deg, var(--app-primary) 0%, var(--app-secondary) 100%);
+  --bg-container: transparent;     /* Прозрачный фон контейнеров */
+  --bg-card: rgba(255, 255, 255, 0.1);  /* Полупрозрачные карточки */
+  --bg-card-hover: rgba(255, 255, 255, 0.2);  /* При наведении */
+  --bg-card-active: rgba(255, 255, 255, 0.3); /* Активное состояние */
+  
+  /* === РАДИУСЫ СКРУГЛЕНИЯ === */
+  --radius-small: 6px;             /* Для полей ввода */
+  --radius-medium: 8px;            /* Для карточек */
+  --radius-large: 15px;            /* Для контейнеров */
+  --radius-button: 25px;           /* Для кнопок */
+  
+  /* === ОТСТУПЫ === */
+  --spacing-xs: 4px;               /* Очень маленький отступ */
+  --spacing-sm: 8px;               /* Маленький отступ */
+  --spacing-md: 16px;              /* Средний отступ */
+  --spacing-lg: 24px;              /* Большой отступ */
+  --spacing-xl: 32px;              /* Очень большой отступ */
+  --spacing-xxl: 40px;             /* Максимальный отступ */
+  
+  /* === РАЗМЕРЫ КОМПОНЕНТОВ === */
+  --header-height: 100px;          /* Высота хедера */
+  --container-max-width: 600px;    /* Максимальная ширина контейнера */
+  --container-padding: 30px;       /* Внутренние отступы контейнера */
+  
+  /* === КНОПКИ === */
+  --button-padding: 15px 30px;     /* Отступы кнопок */
+  --button-padding-small: 8px 16px; /* Маленькие кнопки */
+  --button-font-size: 1.2em;       /* Размер шрифта кнопок */
+  --button-font-size-small: 0.9em; /* Размер шрифта маленьких кнопок */
+  
+  /* === ПОЛЯ ВВОДА === */
+  --input-padding: 8px 12px;       /* Отступы полей ввода */
+  --input-border-width: 2px;       /* Толщина границы */
+  --input-border-color: #ddd;      /* Цвет границы по умолчанию */
+  --input-border-focus: var(--app-primary); /* Цвет границы при фокусе */
+  
+  /* === ТЕНИ === */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);      /* Маленькая тень */
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);     /* Средняя тень */
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);    /* Большая тень */
+  --shadow-button: 0 4px 15px rgba(102, 126, 234, 0.3); /* Тень кнопок */
+  --shadow-button-hover: 0 6px 20px rgba(102, 126, 234, 0.4); /* Тень при наведении */
+  
+  /* === АНИМАЦИИ === */
+  --transition-fast: 0.2s ease;    /* Быстрая анимация */
+  --transition-normal: 0.3s ease;  /* Обычная анимация */
+  --transition-slow: 0.5s ease;    /* Медленная анимация */
+  
+  /* === ШРИФТЫ === */
+  --font-family: 'Arial', sans-serif; /* Основной шрифт */
+  --font-size-xs: 0.75rem;         /* Очень маленький */
+  --font-size-sm: 0.875rem;       /* Маленький */
+  --font-size-base: 1rem;         /* Базовый */
+  --font-size-lg: 1.125rem;       /* Большой */
+  --font-size-xl: 1.25rem;        /* Очень большой */
+  --font-size-2xl: 1.5rem;       /* Двойной */
+  --font-size-3xl: 2.5rem;        /* Тройной (заголовки) */
+  
+  /* === ИГРОВЫЕ ЭЛЕМЕНТЫ === */
+  --example-font-size: 2.5em;     /* Размер шрифта примеров */
+  --example-input-width: 120px;    /* Ширина поля ввода ответа */
+  --example-input-height: auto;    /* Высота поля ввода */
+  --example-input-font-size: 1.8em; /* Размер шрифта в поле ввода */
+  
+  /* === СТАТИСТИКА === */
+  --stat-grid-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Сетка статистики */
+  --stat-item-padding: 15px;       /* Отступы элементов статистики */
+  --stat-value-font-size: 1.5em;  /* Размер шрифта значений */
+  
+  /* === Z-INDEX === */
+  --z-header: 1000;               /* Хедер */
+  --z-footer: 100;                /* Футер */
+  --z-modal: 2000;                /* Модальные окна */
+  
+  /* === ГРАДИЕНТЫ === */
+  --gradient-primary: linear-gradient(135deg, var(--app-primary) 0%, var(--app-secondary) 100%);
+  --gradient-button: linear-gradient(45deg, var(--app-primary), var(--app-secondary));
+  --gradient-success: linear-gradient(45deg, var(--app-success), var(--app-success-dark));
+  --gradient-danger: linear-gradient(45deg, var(--app-danger), var(--app-danger-dark));
+  
+  /* === ПРОЗРАЧНОСТЬ === */
+  --opacity-disabled: 0.5;        /* Прозрачность отключенных элементов */
+  --opacity-hover: 0.8;           /* Прозрачность при наведении */
+  --opacity-overlay: 0.1;         /* Прозрачность оверлеев */
+  --opacity-overlay-hover: 0.2;   /* Прозрачность оверлеев при наведении */
+}
+
+/* === ТЕМЫ === */
+:root[data-theme="light"] {
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --bg-primary: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --bg-container: rgba(255, 255, 255, 0.95);
+  --bg-card: rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] {
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --bg-primary: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  --bg-container: rgba(0, 0, 0, 0.3);
+  --bg-card: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme="high-contrast"] {
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --bg-primary: #ffffff;
+  --bg-container: #ffffff;
+  --bg-card: #f0f0f0;
+  --app-primary: #0000ff;
+  --app-secondary: #800080;
+  --radius-small: 0px;
+  --radius-medium: 0px;
+  --radius-large: 0px;
+  --radius-button: 0px;
+  --shadow-sm: 2px 2px 0 #000000;
+  --shadow-md: 4px 4px 0 #000000;
+  --shadow-lg: 6px 6px 0 #000000;
+}
+
+/* === АДАПТИВНЫЕ ПЕРЕМЕННЫЕ === */
+@media (max-width: 768px) {
+  :root {
+    --container-padding: 20px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+    --font-size-3xl: 2em;
+    --example-font-size: 2em;
+    --example-input-width: 100px;
+    --example-input-font-size: 1.5em;
+    --stat-grid-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --container-padding: 15px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --button-padding: 12px 24px;
+    --button-padding-small: 6px 12px;
+    --font-size-3xl: 1.8em;
+    --example-font-size: 1.8em;
+    --example-input-width: 80px;
+    --example-input-font-size: 1.3em;
+  }
+}
+
+/* === АНИМАЦИИ (если включены) === */
+:root[data-animations="false"] {
+  --transition-fast: 0s;
+  --transition-normal: 0s;
+  --transition-slow: 0s;
+}
+
+/* === УВЕЛИЧЕННЫЙ ШРИФТ === */
+:root[data-font-size="large"] {
+  --font-size-base: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.625rem;
+  --font-size-3xl: 2.75rem;
+  --button-font-size: 1.3em;
+  --example-font-size: 2.75em;
+  --example-input-font-size: 2em;
+}
+
+:root[data-font-size="xlarge"] {
+  --font-size-base: 1.25rem;
+  --font-size-lg: 1.375rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 3rem;
+  --button-font-size: 1.4em;
+  --example-font-size: 3em;
+  --example-input-font-size: 2.2em;
+}
