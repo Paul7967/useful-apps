@@ -1,0 +1,294 @@
+/* Стили для экранов */
+
+/* Базовые стили для всех экранов */
+.screen {
+    display: none;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+.screen.active {
+    display: block;
+}
+
+.screen-content {
+    padding: 20px;
+}
+
+/* Стили для экрана настроек */
+#settings-screen {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+#settings-screen .container {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+}
+
+#settings-screen .setting-group label {
+    color: #555;
+}
+
+#settings-screen .setting-group input {
+    border-color: #ddd;
+}
+
+#settings-screen .setting-group input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+}
+
+#settings-screen .radio-option {
+    background: white;
+    border-color: #ddd;
+}
+
+#settings-screen .radio-option:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+/* Стили для игрового экрана */
+#game-screen {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+#game-screen .container {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+}
+
+#game-screen .progress {
+    color: #666;
+    font-weight: bold;
+}
+
+#game-screen .score {
+    color: #4CAF50;
+}
+
+#game-screen .timer {
+    color: #2196F3;
+}
+
+#game-screen #exampleText {
+    color: #333;
+}
+
+#game-screen #answerInput {
+    border-color: #ddd;
+}
+
+#game-screen #answerInput:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Стили для экрана результатов */
+#results-screen {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+    color: white;
+}
+
+#results-screen .container {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+}
+
+#results-screen .final-score {
+    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+    color: #333;
+}
+
+#results-screen .final-time {
+    background: linear-gradient(45deg, #e3f2fd, #bbdefb);
+    color: #2196F3;
+}
+
+#results-screen .wrong-examples li {
+    background: #ffebee;
+    border-color: #f44336;
+    color: #d32f2f;
+}
+
+/* Стили для экрана статистики */
+#stats-screen {
+    background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+    color: white;
+}
+
+#stats-screen .container {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+}
+
+#stats-screen .stat-item {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+#stats-screen .stat-label {
+    color: #666;
+}
+
+#stats-screen .stat-value {
+    color: #333;
+}
+
+#stats-screen .progress-label {
+    color: #666;
+}
+
+#stats-screen .progress-text {
+    color: #666;
+}
+
+#stats-screen .recent-games li {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+#stats-screen .game-date {
+    color: #666;
+}
+
+#stats-screen .game-score {
+    color: #333;
+}
+
+#stats-screen .game-time {
+    color: #666;
+}
+
+#stats-screen .game-type {
+    color: #999;
+    background: #e9ecef;
+}
+
+/* Специальные сообщения */
+#specialMessage {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Адаптивные стили для экранов */
+@media (max-width: 600px) {
+    .screen-content {
+        padding: 15px;
+    }
+    
+    #settings-screen .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #settings-screen .operation-group {
+        grid-column: 1;
+    }
+    
+    #settings-screen .operation-selector {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #game-screen .game-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #game-screen .example {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    #results-screen .final-score {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    
+    #results-screen .final-time {
+        font-size: 1.3em;
+        padding: 12px;
+    }
+    
+    #stats-screen .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #stats-screen .game-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Темная тема (опционально) */
+@media (prefers-color-scheme: dark) {
+    .screen-content {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    #settings-screen .container,
+    #game-screen .container,
+    #results-screen .container,
+    #stats-screen .container {
+        background: rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* Высокий контраст */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid #000;
+    }
+    
+    .radio-option {
+        border: 2px solid #000;
+    }
+    
+    .setting-group input {
+        border: 2px solid #000;
+    }
+    
+    #answerInput {
+        border: 3px solid #000;
+    }
+}
+
+/* Уменьшенная анимация */
+@media (prefers-reduced-motion: reduce) {
+    .screen {
+        transition: none;
+    }
+    
+    .btn {
+        transition: none;
+    }
+    
+    .radio-option {
+        transition: none;
+    }
+    
+    .setting-group input {
+        transition: none;
+    }
+    
+    #answerInput {
+        transition: none;
+    }
+    
+    #specialMessage {
+        animation: none;
+    }
+}

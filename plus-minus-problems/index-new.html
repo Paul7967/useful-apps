@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" id="version-meta" content="">
+    <meta name="generator" id="generator-meta" content="">
+    <title id="page-title">Загрузка...</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/screens.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Header с навигацией -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <nav class="main-nav">
+                    <button id="nav-settings" class="nav-btn active" data-screen="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Настройки</span>
+                    </button>
+                    <button id="nav-stats" class="nav-btn" data-screen="stats">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Статистика</span>
+                    </button>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-icon">👤</span>
+                    <span id="playerName" class="user-name">Игрок</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1>Математические задачи</h1>
+        
+        <!-- ЭКРАН НАСТРОЕК -->
+        <div id="settings-screen" class="screen active">
+            <div class="screen-content">
+                <h2>Настройки</h2>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="playerNameInput">Имя игрока:</label>
+                        <input type="text" id="playerNameInput" placeholder="Введите ваше имя" maxlength="20">
+                    </div>
+                    <div class="setting-group">
+                        <label for="maxNumber">Максимальное число:</label>
+                        <input type="number" id="maxNumber" min="1" max="100" value="10">
+                    </div>
+                    <div class="setting-group">
+                        <label for="examplesCount">Количество примеров:</label>
+                        <input type="number" id="examplesCount" min="1" max="50" value="5">
+                    </div>
+                    <div class="setting-group operation-group">
+                        <label>Тип действий:</label>
+                        <div class="operation-selector">
+                            <label class="radio-option">
+                                <input type="radio" name="operationType" value="addition" checked>
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">Сложение</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="operationType" value="subtraction">
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">Вычитание</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="operationType" value="both">
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">Сложение и вычитание</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-buttons">
+                    <button id="startGame" class="btn btn-primary">Начать игру</button>
+                    <button id="clearData" class="btn btn-danger">Очистить данные</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ИГРОВОЙ ЭКРАН -->
+        <div id="game-screen" class="screen">
+            <div class="screen-content">
+                <div class="progress">
+                    <span id="currentExample">1</span> / <span id="totalExamples">5</span>
+                </div>
+                <div class="game-stats">
+                    <div class="score">
+                        Баллы: <span id="currentScore">0</span>
+                    </div>
+                    <div class="timer">
+                        Время: <span id="gameTimer">00:00</span>
+                    </div>
+                </div>
+                <div class="example">
+                    <span id="exampleText">2 + 3 = </span>
+                    <input type="number" id="answerInput">
+                </div>
+                <div class="main-button">
+                    <button id="nextExample" class="btn btn-primary">Следующий пример</button>
+                </div>
+                <div class="secondary-buttons">
+                    <button id="newGame" class="btn btn-secondary btn-small">Новая игра</button>
+                    <button id="restartRound" class="btn btn-secondary btn-small">Раунд заново</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН РЕЗУЛЬТАТОВ -->
+        <div id="results-screen" class="screen">
+            <div class="screen-content">
+                <h2>Результаты раунда</h2>
+                <div class="final-score">
+                    Итоговый счет: <span id="finalScore">0</span> / <span id="totalExamplesResult">5</span>
+                    (<span id="percentage">0%</span>)
+                </div>
+                <div class="final-time">
+                    Время раунда: <span id="finalTime">00:00</span>
+                </div>
+                <div id="wrongExamples" class="wrong-examples">
+                    <h3 id="wrongExamplesTitle">Результаты примеров:</h3>
+                    <ul id="wrongExamplesList"></ul>
+                </div>
+                <div id="results-buttons" class="screen-buttons">
+                    <button id="playAgain" class="btn btn-primary">Играть снова</button>
+                    <button id="newGame" class="btn btn-secondary">Новая игра</button>
+                    <button id="showStats" class="btn btn-secondary">Статистика</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН СТАТИСТИКИ -->
+        <div id="stats-screen" class="screen">
+            <div class="screen-content">
+                <h2>Статистика</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Всего игр</div>
+                        <div class="stat-value" id="totalGames">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Лучший счет</div>
+                        <div class="stat-value" id="bestScore">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Средний счет</div>
+                        <div class="stat-value" id="averageScore">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Идеальных игр</div>
+                        <div class="stat-value" id="perfectGames">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Среднее время</div>
+                        <div class="stat-value" id="averageTime">00:00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Последняя игра</div>
+                        <div class="stat-value" id="lastPlayed">Никогда</div>
+                    </div>
+                </div>
+                <div id="progressContainer" class="progress-container"></div>
+                <div class="recent-games">
+                    <h3>Последние игры</h3>
+                    <ul id="recentGamesList"></ul>
+                </div>
+                <div class="screen-buttons">
+                    <button id="backToSettings" class="btn btn-primary">К настройкам</button>
+                    <button id="exportData" class="btn btn-secondary">Экспорт данных</button>
+                    <button id="importData" class="btn btn-secondary">Импорт данных</button>
+                    <button id="clearStats" class="btn btn-danger">Очистить статистику</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p id="footer-text">Загрузка...</p>
+        </div>
+    </footer>
+
+    <!-- Подключение скриптов -->
+    <script src="version.js"></script>
+    
+    <!-- Сервисы -->
+    <script src="js/services/GameService.js"></script>
+    <script src="js/services/StorageService.js"></script>
+    <script src="js/services/TimerService.js"></script>
+    
+    <!-- Базовый класс экрана -->
+    <script src="js/screens/BaseScreen.js"></script>
+    
+    <!-- Экраны -->
+    <script src="js/screens/SettingsScreen.js"></script>
+    <script src="js/screens/GameScreen.js"></script>
+    <script src="js/screens/ResultsScreen.js"></script>
+    <script src="js/screens/StatsScreen.js"></script>
+    
+    <!-- Главное приложение -->
+    <script src="js/app.js"></script>
+</body>
+</html>
