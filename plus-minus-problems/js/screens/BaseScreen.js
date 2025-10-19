@@ -35,19 +35,17 @@ class BaseScreen {
 
         console.log(`🔄 [${this.constructor.name}] Показываем экран ${this.screenId}`);
         
-        // Скрываем все экраны
+        // Скрываем все экраны сразу
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active', 'fade-in');
-            screen.classList.add('fade-out');
+            screen.style.display = 'none';
         });
 
-        // Показываем текущий экран с анимацией
-        setTimeout(() => {
-            this.element.classList.remove('fade-out');
-            this.element.classList.add('active', 'fade-in');
-            this.isVisible = true;
-            this.onShow();
-        }, 300);
+        // Показываем текущий экран
+        this.element.style.display = 'block';
+        this.element.classList.add('active', 'fade-in');
+        this.isVisible = true;
+        this.onShow();
     }
 
     /**
@@ -58,7 +56,7 @@ class BaseScreen {
 
         console.log(`🔄 [${this.constructor.name}] Скрываем экран ${this.screenId}`);
         this.element.classList.remove('active', 'fade-in');
-        this.element.classList.add('fade-out');
+        this.element.style.display = 'none';
         this.isVisible = false;
         this.onHide();
     }

@@ -18,8 +18,10 @@ function bundleHTML() {
     });
     
     // Сохраняем результат
-    fs.writeFileSync('dist/index-standalone.html', html);
-    console.log('✅ Создан standalone файл: dist/index-standalone.html');
+    fs.writeFileSync('dist/math-problems.html', html);
+    console.log('✅ Создан standalone файл: dist/math-problems.html');
 }
 
 bundleHTML();
+
+// Для запуска выполнить команду: node bundle.js

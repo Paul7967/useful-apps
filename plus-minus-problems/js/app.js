@@ -51,8 +51,10 @@ class MathApp {
         // Загрузка имени игрока в Header
         this.loadPlayerNameInHeader();
         
-        // Показ начального экрана
-        this.showScreen('settings');
+        // Показ начального экрана (только при первой загрузке)
+        if (!this.currentScreen) {
+            this.showScreen('settings');
+        }
         
         console.log('✅ [MathApp] Приложение инициализировано');
     }
@@ -72,6 +74,14 @@ class MathApp {
                 }
             });
         });
+        
+        // Обработчик для кнопки "Новая игра"
+        const newGameBtn = document.getElementById('newGame');
+        if (newGameBtn) {
+            newGameBtn.addEventListener('click', () => {
+                this.startNewGame();
+            });
+        }
         
         console.log('✅ [MathApp] Навигация инициализирована');
     }
@@ -125,8 +135,11 @@ class MathApp {
     startGame() {
         console.log('🎮 [MathApp] Запуск игры');
         
-        // Получаем настройки из экрана настроек
-        this.gameSettings = this.screens.settings.getCurrentSettings();
+        // Если настройки уже загружены, используем их
+        if (!this.gameSettings) {
+            // Получаем настройки из экрана настроек
+            this.gameSettings = this.screens.settings.getCurrentSettings();
+        }
         console.log('🎮 [MathApp] Настройки игры:', this.gameSettings);
         
         // Переходим к игровому экрану
@@ -234,6 +247,28 @@ class MathApp {
         this.showScreen('settings');
         
         console.log('✅ [MathApp] Приложение сброшено');
+    }
+
+    /**
+     * Начать новую игру с текущими настройками
+     */
+    startNewGame() {
+        console.log('🎯 [MathApp] Начало новой игры');
+        
+        // Загружаем текущие настройки
+        this.loadSettings();
+        
+        // Проверяем, что настройки загружены
+        if (!this.gameSettings) {
+            console.log('⚠️ [MathApp] Настройки не найдены, переходим к экрану настроек');
+            this.showScreen('settings');
+            return;
+        }
+        
+        // Начинаем новую игру с текущими настройками
+        this.startGame();
+        
+        console.log('✅ [MathApp] Новая игра начата');
     }
 
     /**

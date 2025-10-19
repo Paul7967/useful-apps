@@ -338,3 +338,39 @@
         transform: none;
     }
 }
+
+/* Стили для кнопки "Новая игра" */
+.new-game-btn {
+    background: var(--gradient-success);
+    border-color: var(--app-success);
+    color: white;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.new-game-btn::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.new-game-btn:hover {
+    background: var(--gradient-success);
+    border-color: var(--app-success-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.new-game-btn:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.new-game-btn .nav-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
