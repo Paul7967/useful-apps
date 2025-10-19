@@ -231,14 +231,16 @@
 @media (max-width: 768px) {
     .header-content {
         padding: 10px 15px;
-        flex-direction: column;
+        flex-direction: row;
         gap: 10px;
+        align-items: center;
     }
     
     .header-left {
-        flex-direction: column;
+        flex-direction: row;
         gap: 10px;
         align-items: center;
+        flex: 1;
     }
     
     .app-title {
@@ -250,14 +252,16 @@
     }
     
     .main-nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 6px;
+        flex: 1;
     }
     
     .nav-btn {
-        padding: 8px 12px;
-        font-size: 0.8em;
+        padding: 6px 10px;
+        font-size: 0.75em;
+        white-space: nowrap;
     }
     
     .nav-text {
@@ -265,28 +269,45 @@
     }
     
     .user-info {
-        padding: 6px 12px;
-        font-size: 0.8em;
+        padding: 6px 10px;
+        font-size: 0.75em;
+        flex-shrink: 0;
     }
 }
 
 @media (max-width: 480px) {
     .header-content {
         padding: 8px 10px;
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .header-left {
+        flex-direction: row;
+        align-items: center;
+        flex: 1;
     }
     
     .app-title {
         font-size: 1em;
     }
     
+    .main-nav {
+        flex-wrap: nowrap;
+        gap: 4px;
+        flex: 1;
+    }
+    
     .nav-btn {
-        padding: 6px 10px;
+        padding: 4px 8px;
         font-size: 0.7em;
+        white-space: nowrap;
     }
     
     .user-info {
         padding: 4px 8px;
         font-size: 0.7em;
+        flex-shrink: 0;
     }
 }
 
