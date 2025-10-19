@@ -24,20 +24,28 @@ class SettingsScreen extends BaseScreen {
             this.handlePlayerSelectChange();
         });
 
-        // Обработка ввода нового имени
-        this.addEventListener('playerNameInput', 'input', () => {
-            this.updatePlayerName();
-            this.savePlayerName();
+        // Кнопка добавления игрока
+        this.addEventListener('addPlayerBtn', 'click', () => {
+            this.showAddPlayerModal();
         });
 
-        // Обработка завершения ввода нового игрока
-        this.addEventListener('playerNameInput', 'blur', () => {
-            this.handleNewPlayerInput();
+        // Модальное окно добавления игрока
+        this.addEventListener('closeModalBtn', 'click', () => {
+            this.hideAddPlayerModal();
         });
 
-        this.addEventListener('playerNameInput', 'keydown', (e) => {
+        this.addEventListener('cancelAddPlayer', 'click', () => {
+            this.hideAddPlayerModal();
+        });
+
+        this.addEventListener('confirmAddPlayer', 'click', () => {
+            this.addNewPlayer();
+        });
+
+        // Обработка нажатия Enter в поле имени нового игрока
+        this.addEventListener('newPlayerName', 'keydown', (e) => {
             if (e.key === 'Enter') {
-                this.handleNewPlayerInput();
+                this.addNewPlayer();
             }
         });
 
@@ -264,20 +272,30 @@ class SettingsScreen extends BaseScreen {
         
         const allPlayers = this.storageService.getAllPlayers();
         
-        // Очищаем существующие опции (кроме первой: "добавить нового")
-        while (select.children.length > 1) {
-            select.removeChild(select.lastChild);
+        // Очищаем все существующие опции
+        select.innerHTML = '';
+        
+        if (allPlayers.length === 0) {
+            // Если нет игроков, отключаем select и добавляем placeholder
+            select.disabled = true;
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'Нет доступных игроков';
+            placeholderOption.disabled = true;
+            select.appendChild(placeholderOption);
+            console.log('👥 [SettingsScreen] Select отключен - нет игроков');
+        } else {
+            // Если есть игроки, включаем select и добавляем опции
+            select.disabled = false;
+            allPlayers.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player;
+                option.textContent = player;
+                select.appendChild(option);
+            });
+            console.log('👥 [SettingsScreen] Select обновлен с', allPlayers.length, 'игроками');
         }
         
-        // Добавляем опции для каждого игрока
-        allPlayers.forEach(player => {
-            const option = document.createElement('option');
-            option.value = player;
-            option.textContent = player;
-            select.appendChild(option);
-        });
-        
-        console.log('👥 [SettingsScreen] Select обновлен с', allPlayers.length, 'игроками');
         console.log('👥 [SettingsScreen] Список игроков:', allPlayers);
         console.log('👥 [SettingsScreen] Опции в select:', Array.from(select.children).map(opt => opt.textContent));
     }
@@ -287,21 +305,13 @@ class SettingsScreen extends BaseScreen {
      */
     handlePlayerSelectChange() {
         const select = this.getElement('playerNameSelect');
-        const input = this.getElement('playerNameInput');
         
-        if (!select || !input) return;
+        if (!select) return;
         
         const selectedValue = select.value;
         
-        if (selectedValue === '__NEW_PLAYER__') {
-            // Показать поле ввода для нового игрока
-            input.style.display = 'block';
-            input.focus();
-            input.value = ''; // Очищаем поле
-            console.log('👤 [SettingsScreen] Режим добавления нового игрока');
-        } else {
-            // Скрыть поле ввода и установить выбранного игрока
-            input.style.display = 'none';
+        if (selectedValue) {
+            // Устанавливаем выбранного игрока
             this.setValue('playerNameInput', selectedValue);
             this.updatePlayerName();
             this.savePlayerName();
@@ -312,45 +322,6 @@ class SettingsScreen extends BaseScreen {
         }
     }
 
-    /**
-     * Обработка ввода нового игрока
-     */
-    handleNewPlayerInput() {
-        const input = this.getElement('playerNameInput');
-        const select = this.getElement('playerNameSelect');
-        
-        if (!input || !select) return;
-        
-        const newPlayerName = input.value.trim();
-        
-        if (newPlayerName.length > 0) {
-            // Сохраняем нового игрока
-            this.storageService.savePlayerName(newPlayerName);
-            
-            // Обновляем внутреннее состояние
-            this.setValue('playerNameInput', newPlayerName);
-            this.updatePlayerName();
-            this.savePlayerName();
-            
-            // Обновляем список игроков в select
-            this.updatePlayerSelect();
-            
-            // Выбираем нового игрока в select
-            select.value = newPlayerName;
-            
-            // Скрываем поле ввода
-            input.style.display = 'none';
-            
-            console.log('👤 [SettingsScreen] Добавлен новый игрок:', newPlayerName);
-            console.log('👤 [SettingsScreen] Выбранное значение в select:', select.value);
-            console.log('👤 [SettingsScreen] Опции после добавления:', Array.from(select.children).map(opt => opt.textContent));
-        } else {
-            // Если имя пустое, возвращаемся к опции добавления
-            select.value = '__NEW_PLAYER__';
-            input.style.display = 'none';
-            console.log('👤 [SettingsScreen] Отменен ввод нового игрока');
-        }
-    }
 
     /**
      * Восстановить выбранного игрока при загрузке
@@ -360,6 +331,12 @@ class SettingsScreen extends BaseScreen {
         if (!select) return;
         
         console.log('👤 [SettingsScreen] Восстановление игрока:', playerName);
+        
+        // Если select отключен (нет игроков), ничего не делаем
+        if (select.disabled) {
+            console.log('👤 [SettingsScreen] Select отключен, восстановление пропущено');
+            return;
+        }
         
         if (playerName && playerName.trim()) {
             // Проверяем, есть ли такой игрок в списке
@@ -373,14 +350,110 @@ class SettingsScreen extends BaseScreen {
                 console.log('👤 [SettingsScreen] Восстановлен игрок:', playerName);
                 console.log('👤 [SettingsScreen] Выбранное значение:', select.value);
             } else {
-                // Если игрок не найден в списке, выбираем опцию добавления
-                select.value = '__NEW_PLAYER__';
-                console.log('👤 [SettingsScreen] Игрок не найден в списке, режим добавления');
+                // Если игрок не найден в списке, выбираем первого доступного
+                if (allPlayers.length > 0) {
+                    select.value = allPlayers[0];
+                    console.log('👤 [SettingsScreen] Игрок не найден, выбран первый доступный:', allPlayers[0]);
+                }
             }
         } else {
-            // Если имя не задано, выбираем опцию добавления
-            select.value = '__NEW_PLAYER__';
-            console.log('👤 [SettingsScreen] Имя игрока не задано, режим добавления');
+            // Если имя не задано, выбираем первого доступного игрока
+            const allPlayers = this.storageService.getAllPlayers();
+            if (allPlayers.length > 0) {
+                select.value = allPlayers[0];
+                console.log('👤 [SettingsScreen] Имя игрока не задано, выбран первый доступный:', allPlayers[0]);
+            }
         }
+    }
+
+    /**
+     * Показать модальное окно добавления игрока
+     */
+    showAddPlayerModal() {
+        console.log('👤 [SettingsScreen] Показываем модальное окно добавления игрока');
+        const modal = document.getElementById('addPlayerModal');
+        const input = document.getElementById('newPlayerName');
+        
+        if (modal && input) {
+            modal.style.display = 'block';
+            input.value = '';
+            input.focus();
+            
+            // Закрытие по клику вне модального окна
+            modal.addEventListener('click', this.handleModalClick.bind(this));
+        }
+    }
+
+    /**
+     * Скрыть модальное окно добавления игрока
+     */
+    hideAddPlayerModal() {
+        console.log('👤 [SettingsScreen] Скрываем модальное окно добавления игрока');
+        const modal = document.getElementById('addPlayerModal');
+        
+        if (modal) {
+            modal.style.display = 'none';
+            modal.removeEventListener('click', this.handleModalClick.bind(this));
+        }
+    }
+
+    /**
+     * Обработка клика по модальному окну
+     */
+    handleModalClick(e) {
+        const modal = document.getElementById('addPlayerModal');
+        if (e.target === modal) {
+            this.hideAddPlayerModal();
+        }
+    }
+
+    /**
+     * Добавить нового игрока
+     */
+    addNewPlayer() {
+        console.log('👤 [SettingsScreen] Добавление нового игрока');
+        const input = document.getElementById('newPlayerName');
+        
+        if (!input) return;
+        
+        const newPlayerName = input.value.trim();
+        
+        if (!newPlayerName) {
+            alert('Пожалуйста, введите имя игрока');
+            input.focus();
+            return;
+        }
+        
+        if (newPlayerName.length < 2) {
+            alert('Имя игрока должно содержать минимум 2 символа');
+            input.focus();
+            return;
+        }
+        
+        // Проверяем, не существует ли уже такой игрок
+        const existingPlayers = this.storageService.getAllPlayers();
+        if (existingPlayers.includes(newPlayerName)) {
+            alert('Игрок с таким именем уже существует');
+            input.focus();
+            return;
+        }
+        
+        // Сохраняем имя игрока
+        this.storageService.savePlayerName(newPlayerName);
+        
+        // Обновляем список игроков в select
+        this.updatePlayerSelect();
+        
+        // Выбираем нового игрока
+        const select = document.getElementById('playerNameSelect');
+        if (select) {
+            select.value = newPlayerName;
+            this.handlePlayerSelectChange();
+        }
+        
+        // Скрываем модальное окно
+        this.hideAddPlayerModal();
+        
+        console.log('✅ [SettingsScreen] Новый игрок добавлен:', newPlayerName);
     }
 }

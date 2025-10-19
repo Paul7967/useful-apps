@@ -111,7 +111,7 @@ class GameScreen extends BaseScreen {
      * Переход к следующему примеру
      */
     nextExample() {
-        console.log('➡️ [GameScreen] Обработка ответа пользователя');
+        console.log('➡️ [GameScreen] Обработка ответа игрока');
         
         const userAnswer = this.getValue('answerInput');
         if (!userAnswer) {

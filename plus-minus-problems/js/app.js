@@ -135,11 +135,8 @@ class MathApp {
     startGame() {
         console.log('🎮 [MathApp] Запуск игры');
         
-        // Если настройки уже загружены, используем их
-        if (!this.gameSettings) {
-            // Получаем настройки из экрана настроек
-            this.gameSettings = this.screens.settings.getCurrentSettings();
-        }
+        // Всегда получаем актуальные настройки из экрана настроек
+        this.gameSettings = this.screens.settings.getCurrentSettings();
         console.log('🎮 [MathApp] Настройки игры:', this.gameSettings);
         
         // Переходим к игровому экрану

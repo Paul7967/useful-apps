@@ -54,11 +54,17 @@
                 <div class="settings-grid">
                     <div class="setting-group">
                         <label for="playerNameSelect">Выбрать игрока:</label>
-                        <select id="playerNameSelect" name="playerName" title="Выберите игрока или добавьте нового">
-                            <option value="__NEW_PLAYER__"> + Новый игрок</option>
+                        <select id="playerNameSelect" name="playerName" title="Выберите игрока">
                             <!-- Опции будут добавлены динамически -->
                         </select>
-                        <input type="text" id="playerNameInput" placeholder="Введите имя нового игрока" maxlength="20" autocomplete="off" style="display: none;">
+                        <input type="text" id="playerNameInput" placeholder="Введите имя игрока" maxlength="20" autocomplete="off" style="display: none;">
+                    </div>
+                    <div class="setting-group">
+                        <label>Добавить игрока:</label>
+                        <button id="addPlayerBtn" class="btn btn-secondary btn-small" type="button">
+                            <span class="btn-icon">👤</span>
+                            Добавить игрока
+                        </button>
                     </div>
                     <div class="setting-group">
                         <label for="maxNumber">Максимальное число:</label>
@@ -200,6 +206,26 @@
             <p class="author-info">© 2025 Pavel Ostatochnikov</p>
         </div>
     </footer>
+
+    <!-- Модальное окно для добавления игрока -->
+    <div id="addPlayerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Добавить нового игрока</h3>
+                <button id="closeModalBtn" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newPlayerName">Имя игрока:</label>
+                    <input type="text" id="newPlayerName" placeholder="Введите имя игрока" maxlength="20" autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddPlayer" class="btn btn-secondary">Отмена</button>
+                <button id="confirmAddPlayer" class="btn btn-primary">Добавить</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Подключение скриптов -->
     <script src="version.js"></script>
