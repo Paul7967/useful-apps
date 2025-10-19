@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (versionMeta) versionMeta.setAttribute('content', window.APP_VERSION);
         if (generatorMeta) generatorMeta.setAttribute('content', `${window.APP_NAME} v${window.APP_VERSION}`);
         if (pageTitle) pageTitle.textContent = `${window.APP_NAME} v${window.APP_VERSION}`;
-        if (footerText) footerText.textContent = `${window.APP_NAME} v${window.APP_VERSION} | © ${window.COPYRIGHT_YEAR}`;
+        if (footerText) footerText.textContent = `${window.APP_NAME} v${window.APP_VERSION}`;
     }
     
     // Создание экземпляра приложения
