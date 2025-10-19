@@ -170,8 +170,8 @@ class SettingsScreen extends BaseScreen {
             return;
         }
         
-        if (examplesCount > 100) {
-            alert('Количество примеров не должно превышать 100');
+        if (examplesCount > 300) {
+            alert('Количество примеров не должно превышать 300');
             return;
         }
         
