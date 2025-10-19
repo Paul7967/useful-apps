@@ -223,7 +223,7 @@
     }
     
     #stats-screen .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: var(--stat-grid-columns);
     }
     
     #stats-screen .game-item {
