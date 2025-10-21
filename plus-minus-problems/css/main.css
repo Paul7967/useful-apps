@@ -834,6 +834,61 @@ h3 {
     margin-top: 5px !important;
 }
 
+/* Стили для экрана Состав числа */
+#composition-screen {
+    text-align: center;
+}
+
+.composition-info {
+    margin-bottom: 30px;
+}
+
+.composition-info p {
+    color: var(--text-primary);
+    font-size: var(--font-size-lg);
+    margin-bottom: 10px;
+}
+
+.composition-controls {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.composition-controls .setting-group {
+    margin-bottom: 20px;
+}
+
+.composition-controls .setting-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+}
+
+.composition-controls select {
+    width: 100%;
+    padding: var(--input-padding);
+    border: var(--input-border-width) solid var(--input-border-color);
+    border-radius: var(--radius-small);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: var(--font-size-lg);
+    text-align: center;
+    transition: var(--transition-normal);
+}
+
+.composition-controls select:focus {
+    outline: none;
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+}
+
+.composition-controls select option {
+    color: var(--text-dark);
+    background: white;
+}
+
 /* Модальное окно */
 .modal {
     display: none;

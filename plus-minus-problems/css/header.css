@@ -395,3 +395,39 @@
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
+
+/* Стили для кнопки "Состав числа" */
+.composition-btn {
+    background: var(--gradient-primary);
+    border-color: var(--app-primary);
+    color: white;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.composition-btn::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.composition-btn:hover {
+    background: var(--gradient-primary);
+    border-color: var(--app-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.composition-btn:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.composition-btn .nav-icon {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-3px); }
+    60% { transform: translateY(-2px); }
+}

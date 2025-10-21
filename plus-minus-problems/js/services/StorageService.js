@@ -8,7 +8,8 @@ class StorageService {
             playerName: 'mathGamePlayerName',
             settings: 'mathGameSettings',
             gameHistory: 'mathGameHistory',
-            statistics: 'mathGameStatistics'
+            statistics: 'mathGameStatistics',
+            compositionNumber: 'mathGameCompositionNumber'
         };
     }
 
@@ -245,6 +246,32 @@ class StorageService {
         } catch (error) {
             console.error('❌ [StorageService] Ошибка получения списка игроков:', error);
             return [];
+        }
+    }
+
+    /**
+     * Сохранение числа для игры "Состав числа"
+     */
+    saveCompositionNumber(number) {
+        try {
+            localStorage.setItem(this.keys.COMPOSITION_NUMBER, number);
+            console.log('💾 [StorageService] Число для Состав числа сохранено:', number);
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при сохранении числа:', error);
+        }
+    }
+
+    /**
+     * Загрузка числа для игры "Состав числа"
+     */
+    loadCompositionNumber() {
+        try {
+            const number = localStorage.getItem(this.keys.COMPOSITION_NUMBER);
+            console.log('📖 [StorageService] Число для Состав числа загружено:', number);
+            return number;
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при загрузке числа:', error);
+            return null;
         }
     }
 

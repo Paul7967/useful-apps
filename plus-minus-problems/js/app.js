@@ -17,6 +17,7 @@ class MathApp {
         this.screens = {
             settings: new SettingsScreen(this),
             game: new GameScreen(this),
+            composition: new CompositionScreen(this),
             results: new ResultsScreen(this),
             stats: new StatsScreen(this)
         };
@@ -75,11 +76,19 @@ class MathApp {
             });
         });
         
-        // Обработчик для кнопки "Новая игра"
+        // Обработчик для кнопки "Примеры" (бывшая "Новая игра")
         const newGameBtn = document.getElementById('newGame');
         if (newGameBtn) {
             newGameBtn.addEventListener('click', () => {
                 this.startNewGame();
+            });
+        }
+
+        // Обработчик для кнопки "Состав числа"
+        const compositionBtn = document.getElementById('compositionGame');
+        if (compositionBtn) {
+            compositionBtn.addEventListener('click', () => {
+                this.showScreen('composition');
             });
         }
         
