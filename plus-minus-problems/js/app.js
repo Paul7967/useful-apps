@@ -18,6 +18,7 @@ class MathApp {
             settings: new SettingsScreen(this),
             game: new GameScreen(this),
             composition: new CompositionScreen(this),
+            compositionGame: new CompositionGameScreen(this),
             results: new ResultsScreen(this),
             stats: new StatsScreen(this)
         };
@@ -52,10 +53,8 @@ class MathApp {
         // Загрузка имени игрока в Header
         this.loadPlayerNameInHeader();
         
-        // Показ начального экрана (только при первой загрузке)
-        if (!this.currentScreen) {
-            this.showScreen('settings');
-        }
+        // Восстанавливаем последний экран или показываем настройки по умолчанию
+        this.restoreLastScreen();
         
         console.log('✅ [MathApp] Приложение инициализировано');
     }
@@ -96,6 +95,32 @@ class MathApp {
     }
 
     /**
+     * Запуск игры "Состав числа"
+     */
+    startCompositionGame(range, repetitions = 1) {
+        console.log('🔢 [MathApp] Запуск игры Состав числа с диапазоном:', range, 'повторений:', repetitions);
+        
+        // Переходим к игровому экрану
+        this.showScreen('compositionGame');
+        
+        // Запускаем игру
+        this.screens.compositionGame.startGame(range, repetitions);
+    }
+
+    /**
+     * Показ результатов игры "Состав числа"
+     */
+    showCompositionResults(results) {
+        console.log('📊 [MathApp] Показ результатов игры Состав числа:', results);
+        
+        // Переходим к экрану результатов
+        this.showScreen('results');
+        
+        // Передаем результаты в экран результатов
+        this.screens.results.showCompositionResults(results);
+    }
+
+    /**
      * Показать экран
      */
     showScreen(screenName, data = null) {
@@ -110,6 +135,9 @@ class MathApp {
         if (this.screens[screenName]) {
             this.screens[screenName].show(data);
             this.currentScreen = screenName;
+            
+            // Сохраняем текущий экран в localStorage
+            this.services.storage.saveCurrentScreen(screenName);
             
             // Обновляем активную кнопку навигации
             this.updateNavigation(screenName);
@@ -354,6 +382,24 @@ class MathApp {
     loadPlayerNameInHeader() {
         const playerName = this.services.storage.loadPlayerName();
         this.updatePlayerNameInHeader(playerName);
+    }
+
+    /**
+     * Восстановление последнего экрана
+     */
+    restoreLastScreen() {
+        const lastScreen = this.services.storage.loadCurrentScreen();
+        
+        if (lastScreen && this.screens[lastScreen]) {
+            console.log('🔄 [MathApp] Восстанавливаем последний экран:', lastScreen);
+            // Добавляем небольшую задержку для полной инициализации DOM
+            setTimeout(() => {
+                this.showScreen(lastScreen);
+            }, 50);
+        } else {
+            console.log('🔄 [MathApp] Показываем экран настроек по умолчанию');
+            this.showScreen('settings');
+        }
     }
 }
 

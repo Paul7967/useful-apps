@@ -15,9 +15,11 @@ class BaseScreen {
      * Инициализация экрана
      */
     init() {
-        this.element = document.getElementById(`${this.screenId}-screen`);
+        const elementId = `${this.screenId}-screen`;
+        console.log(`🔍 [${this.constructor.name}] Поиск элемента с ID: ${elementId}`);
+        this.element = document.getElementById(elementId);
         if (!this.element) {
-            console.error(`❌ [${this.constructor.name}] Элемент ${this.screenId}-screen не найден`);
+            console.error(`❌ [${this.constructor.name}] Элемент ${elementId} не найден`);
             return;
         }
         this.bindEvents();
@@ -110,7 +112,11 @@ class BaseScreen {
      * Получение элемента по ID
      */
     getElement(id) {
-        return document.getElementById(id);
+        const element = document.getElementById(id);
+        if (!element) {
+            console.error(`❌ [${this.constructor.name}] Элемент с ID "${id}" не найден`);
+        }
+        return element;
     }
 
     /**

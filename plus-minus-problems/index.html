@@ -138,28 +138,125 @@
             <div class="screen-content">
                 <h2>Состав числа</h2>
                 <div class="composition-info">
-                    <p>Эта игра поможет изучить состав чисел от 1 до 10</p>
-                    <p>Выберите число и найдите все способы его разложения</p>
+                    <p>Эта игра поможет изучить состав чисел</p>
+                    <p>Выберите диапазон и найдите все способы разложения чисел</p>
                 </div>
                 <div class="composition-controls">
                     <div class="setting-group">
-                        <label for="compositionNumber">Выберите число:</label>
-                        <select id="compositionNumber">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                        </select>
+                        <label>Выберите диапазон чисел:</label>
+                        <div class="range-selector">
+                            <div class="range-inputs">
+                                <div class="range-input">
+                                    <label for="compositionMinNumber">От:</label>
+                                    <select id="compositionMinNumber">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </div>
+                                <div class="range-input">
+                                    <label for="compositionMaxNumber">До:</label>
+                                    <select id="compositionMaxNumber">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                    </select>
+                                </div>
+                                <div class="range-input">
+                                    <label for="compositionRepetitions">Повторений:</label>
+                                    <select id="compositionRepetitions">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="rangeError" class="error-message" style="display: none;">
+                                Минимальное число должно быть меньше максимального
+                            </div>
+                        </div>
                     </div>
                     <div class="main-button">
                         <button id="startComposition" class="btn btn-primary">Начать игру</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ИГРОВОЙ ЭКРАН СОСТАВ ЧИСЛА -->
+        <div id="composition-game-screen" class="screen">
+            <div class="screen-content">
+                <h2>Состав числа</h2>
+                
+                <!-- Блок выбора диапазона -->
+                <div class="composition-range-info">
+                    <span>Диапазон: <span id="currentRange">1 - 20</span></span>
+                </div>
+                
+                <!-- Блок с текущим числом -->
+                <div class="current-number">
+                    <span>Текущее число: <span id="currentNumber">5</span></span>
+                    <span class="repetition-info">Повторение: <span id="currentRepetition">1</span></span>
+                </div>
+                
+                <!-- Блок статистики -->
+                <div class="composition-stats">
+                    <div class="selected-count">
+                        Выбрано: <span id="selectedCount">0</span>
+                    </div>
+                    <div class="composition-timer">
+                        Время: <span id="compositionTimer">00:00</span>
+                    </div>
+                </div>
+                
+                <!-- Блок с кнопками примеров -->
+                <div class="composition-examples" id="compositionExamples">
+                    <!-- Кнопки будут генерироваться динамически -->
+                </div>
+                
+                <!-- Кнопки управления -->
+                <div class="composition-controls">
+                    <button id="nextCompositionNumber" class="btn btn-primary">Следующее число</button>
+                    <button id="restartComposition" class="btn btn-secondary">Начать заново</button>
                 </div>
             </div>
         </div>
@@ -215,6 +312,14 @@
                     <div class="stat-item">
                         <div class="stat-label">Последняя игра</div>
                         <div class="stat-value" id="lastPlayed">Никогда</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Игры "Состав числа"</div>
+                        <div class="stat-value" id="compositionGames">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Обычные игры</div>
+                        <div class="stat-value" id="regularGames">0</div>
                     </div>
                 </div>
                 <div id="progressContainer" class="progress-container"></div>
@@ -277,6 +382,7 @@
     <script src="js/screens/SettingsScreen.js"></script>
     <script src="js/screens/GameScreen.js"></script>
     <script src="js/screens/CompositionScreen.js"></script>
+    <script src="js/screens/CompositionGameScreen.js"></script>
     <script src="js/screens/ResultsScreen.js"></script>
     <script src="js/screens/StatsScreen.js"></script>
     
