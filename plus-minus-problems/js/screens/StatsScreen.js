@@ -83,6 +83,14 @@ class StatsScreen extends BaseScreen {
         this.setText('perfectGames', this.statistics.perfectGames);
         this.setText('averageTime', this.formatTime(this.statistics.averageTime));
         
+        // Статистика по типам игр
+        if (this.statistics.compositionGames !== undefined) {
+            this.setText('compositionGames', this.statistics.compositionGames);
+        }
+        if (this.statistics.regularGames !== undefined) {
+            this.setText('regularGames', this.statistics.regularGames);
+        }
+        
         // Последняя игра
         if (this.statistics.lastPlayed) {
             const lastPlayedDate = new Date(this.statistics.lastPlayed);
@@ -264,18 +272,50 @@ class StatsScreen extends BaseScreen {
             return;
         }
         
-        this.statistics.recentGames.slice().reverse().forEach(game => {
+        // Сортируем игры по дате (новые сверху) и переворачиваем для отображения
+        const sortedGames = this.statistics.recentGames
+            .slice()
+            .sort((a, b) => {
+                const dateA = new Date(a.date || a.timestamp);
+                const dateB = new Date(b.date || b.timestamp);
+                return dateB - dateA; // Новые игры сверху
+            });
+        
+        console.log('📅 [StatsScreen] Отсортированные игры:', sortedGames.map(game => ({
+            id: game.id,
+            type: game.type || 'regular',
+            date: game.date || game.timestamp
+        })));
+        
+        sortedGames.forEach(game => {
             const tr = document.createElement('tr');
-            const gameDate = new Date(game.timestamp).toLocaleDateString('ru-RU');
-            const gameTime = this.formatTime(game.time);
-            const percentage = Math.round((game.score / game.totalExamples) * 100);
+            const gameDate = new Date(game.date || game.timestamp).toLocaleDateString('ru-RU');
+            
+            let gameTime, result, gameType, maxNumber;
+            
+            if (game.type === 'composition') {
+                // Игра "Состав числа"
+                gameTime = this.formatTime(game.gameTime);
+                const totalAnswers = game.correctAnswers + game.incorrectAnswers;
+                const percentage = totalAnswers > 0 ? Math.round((game.correctAnswers / totalAnswers) * 100) : 0;
+                result = `${game.correctAnswers}/${totalAnswers} (${percentage}%)`;
+                gameType = 'Состав числа';
+                maxNumber = game.range || (game.minNumber && game.maxNumber ? `${game.minNumber}-${game.maxNumber}` : 'Диапазон');
+            } else {
+                // Обычная игра
+                gameTime = this.formatTime(game.time);
+                const percentage = Math.round((game.score / game.totalExamples) * 100);
+                result = `${game.score}/${game.totalExamples} (${percentage}%)`;
+                gameType = this.getOperationTypeName(game.operationType);
+                maxNumber = `До ${game.maxNumber}`;
+            }
             
             tr.innerHTML = `
                 <td>${gameDate}</td>
-                <td>${game.score}/${game.totalExamples} (${percentage}%)</td>
+                <td>${result}</td>
                 <td>${gameTime}</td>
-                <td>${this.getOperationTypeName(game.operationType)}</td>
-                <td>До ${game.maxNumber}</td>
+                <td>${gameType}</td>
+                <td>${maxNumber}</td>
                 <td><button class="delete-game-btn" data-game-id="${game.id}" title="Удалить игру">×</button></td>
             `;
             
@@ -291,10 +331,17 @@ class StatsScreen extends BaseScreen {
      */
     addDeleteGameListeners() {
         const deleteButtons = document.querySelectorAll('.delete-game-btn');
+        console.log('🔗 [StatsScreen] Найдено кнопок удаления:', deleteButtons.length);
+        
         deleteButtons.forEach(button => {
+            // Удаляем старые обработчики, если есть
+            button.removeEventListener('click', this.handleDeleteClick);
+            
+            // Добавляем новый обработчик
             button.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const gameId = parseInt(button.getAttribute('data-game-id'));
+                console.log('🗑️ [StatsScreen] Нажата кнопка удаления для игры ID:', gameId);
                 this.deleteGame(gameId);
             });
         });
@@ -312,12 +359,13 @@ class StatsScreen extends BaseScreen {
             
             if (success) {
                 // Перезагружаем статистику
+                console.log('🔄 [StatsScreen] Перезагружаем статистику после удаления');
                 this.loadStatistics();
                 this.displayStatistics();
-                console.log('✅ [StatsScreen] Игра успешно удалена');
+                console.log('✅ [StatsScreen] Игра успешно удалена и статистика обновлена');
             } else {
                 console.error('❌ [StatsScreen] Ошибка при удалении игры');
-                alert('Ошибка при удалении игры');
+                alert('Ошибка при удалении игры. Игра не найдена или уже удалена.');
             }
         }
     }

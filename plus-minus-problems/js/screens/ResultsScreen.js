@@ -245,4 +245,85 @@ class ResultsScreen extends BaseScreen {
             console.log('🗑️ [ResultsScreen] История игр очищена');
         }
     }
+
+    /**
+     * Показать результаты игры "Состав числа"
+     */
+    showCompositionResults(results) {
+        console.log('📊 [ResultsScreen] Отображение результатов игры Состав числа:', results);
+        
+        // Обновляем заголовок
+        const title = this.getElement('resultsTitle');
+        if (title) {
+            title.textContent = 'Результаты игры "Состав числа"';
+        }
+        
+        // Обновляем основной контент
+        this.displayCompositionResults(results);
+    }
+
+    /**
+     * Отображение результатов игры "Состав числа"
+     */
+    displayCompositionResults(results) {
+        const container = this.element.querySelector('.screen-content');
+        if (!container) return;
+        
+        // Очищаем контент
+        container.innerHTML = `
+            <h2>Результаты игры "Состав числа"</h2>
+            
+            <div class="composition-results">
+                <div class="final-score">
+                    Правильных ответов: <span class="score-value">${results.correctAnswers}</span>
+                </div>
+                <div class="final-score">
+                    Неправильных ответов: <span class="score-value">${results.incorrectAnswers}</span>
+                </div>
+                <div class="final-time">
+                    Время игры: <span class="time-value">${this.formatTime(results.gameTime)}</span>
+                </div>
+            </div>
+            
+            ${results.wrongExamples.length > 0 ? this.displayWrongExamples(results.wrongExamples) : ''}
+            
+            <div class="screen-buttons">
+                <button id="playAgain" class="btn btn-primary">Играть снова</button>
+                <button id="newGameFromResults" class="btn btn-secondary">Новая игра</button>
+                <button id="showStats" class="btn btn-info">Показать статистику</button>
+            </div>
+        `;
+        
+        // Привязываем события
+        this.bindEvents();
+    }
+
+    /**
+     * Отображение неправильных примеров
+     */
+    displayWrongExamples(wrongExamples) {
+        let html = '<div class="wrong-examples"><h3>Неправильные ответы:</h3><ul>';
+        
+        wrongExamples.forEach(example => {
+            html += `
+                <li>
+                    <span class="example-text">${example.example}</span>
+                    <span class="user-answer">Ваш ответ: ${example.userAnswer}</span>
+                    <span class="correct-answer">Правильно: ${example.correctAnswer}</span>
+                </li>
+            `;
+        });
+        
+        html += '</ul></div>';
+        return html;
+    }
+
+    /**
+     * Форматирование времени
+     */
+    formatTime(milliseconds) {
+        const minutes = Math.floor(milliseconds / 60000);
+        const seconds = Math.floor((milliseconds % 60000) / 1000);
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
 }

@@ -8,7 +8,11 @@ class StorageService {
             playerName: 'mathGamePlayerName',
             settings: 'mathGameSettings',
             gameHistory: 'mathGameHistory',
-            statistics: 'mathGameStatistics'
+            statistics: 'mathGameStatistics',
+            compositionRange: 'mathGameCompositionRange',
+            compositionGames: 'mathGameCompositionGames',
+            compositionSettings: 'mathGameCompositionSettings',
+            currentScreen: 'mathGameCurrentScreen'
         };
     }
 
@@ -139,6 +143,7 @@ class StorageService {
      */
     getPlayerStatistics(playerName = null) {
         const history = this.loadGameHistory();
+        const compositionHistory = this.loadCompositionGames();
         
         // Если имя игрока не передано, получаем текущее имя
         if (!playerName) {
@@ -147,8 +152,17 @@ class StorageService {
         
         // Фильтруем историю по имени игрока
         const playerHistory = history.filter(game => game.playerName === playerName);
+        const playerCompositionHistory = compositionHistory.filter(game => game.playerName === playerName);
         
-        if (playerHistory.length === 0) {
+        // Объединяем все игры и сортируем по дате (новые сверху)
+        const allGames = [...playerHistory, ...playerCompositionHistory]
+            .sort((a, b) => {
+                const dateA = new Date(a.date || a.timestamp);
+                const dateB = new Date(b.date || b.timestamp);
+                return dateB - dateA; // Новые игры сверху
+            });
+        
+        if (allGames.length === 0) {
             return {
                 totalGames: 0,
                 bestScore: 0,
@@ -157,20 +171,41 @@ class StorageService {
                 averageTime: 0,
                 perfectGames: 0,
                 lastPlayed: null,
-                playerName: playerName
+                playerName: playerName,
+                compositionGames: 0,
+                regularGames: 0
             };
         }
 
-        const totalGames = playerHistory.length;
-        const scores = playerHistory.map(game => game.score);
-        const times = playerHistory.map(game => game.time);
+        const totalGames = allGames.length;
+        const regularGames = playerHistory.length;
+        const compositionGames = playerCompositionHistory.length;
+        
+        // Для обычных игр используем score, для игр "Состав числа" - correctAnswers
+        const scores = allGames.map(game => {
+            if (game.type === 'composition') {
+                return game.correctAnswers || 0;
+            }
+            return game.score || 0;
+        });
+        
+        const times = allGames.map(game => {
+            if (game.type === 'composition') {
+                return game.gameTime || 0;
+            }
+            return game.time || 0;
+        });
         
         const bestScore = Math.max(...scores);
         const averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / totalGames);
         const totalTime = times.reduce((a, b) => a + b, 0);
         const averageTime = Math.round(totalTime / totalGames);
-        const perfectGames = scores.filter(score => score === playerHistory[0].totalExamples).length;
-        const lastPlayed = playerHistory[playerHistory.length - 1].timestamp;
+        
+        // Для perfectGames считаем игры с максимальным счетом
+        const maxPossibleScore = Math.max(...scores);
+        const perfectGames = scores.filter(score => score === maxPossibleScore).length;
+        
+        const lastPlayed = allGames[allGames.length - 1].date || allGames[allGames.length - 1].timestamp;
 
         const statistics = {
             totalGames,
@@ -181,7 +216,9 @@ class StorageService {
             perfectGames,
             lastPlayed,
             playerName: playerName,
-            recentGames: playerHistory // Все игры текущего игрока
+            recentGames: allGames, // Все игры текущего игрока
+            compositionGames: compositionGames,
+            regularGames: regularGames
         };
 
         console.log('📊 [StorageService] Статистика игрока', playerName, ':', statistics);
@@ -244,6 +281,115 @@ class StorageService {
             return players;
         } catch (error) {
             console.error('❌ [StorageService] Ошибка получения списка игроков:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Сохранение диапазона для игры "Состав числа"
+     */
+    saveCompositionRange(range) {
+        try {
+            localStorage.setItem(this.keys.compositionRange, range);
+            console.log('💾 [StorageService] Диапазон для Состав числа сохранен:', range);
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при сохранении диапазона:', error);
+        }
+    }
+
+    /**
+     * Загрузка диапазона для игры "Состав числа"
+     */
+    loadCompositionRange() {
+        try {
+            const range = localStorage.getItem(this.keys.compositionRange);
+            console.log('📖 [StorageService] Диапазон для Состав числа загружен:', range);
+            return range;
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при загрузке диапазона:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Сохранение настроек игры "Состав числа"
+     */
+    saveCompositionSettings(settings) {
+        try {
+            localStorage.setItem(this.keys.compositionSettings, JSON.stringify(settings));
+            console.log('💾 [StorageService] Настройки Состав числа сохранены:', settings);
+            
+            // Проверяем, что данные действительно сохранились
+            setTimeout(() => {
+                const saved = localStorage.getItem(this.keys.compositionSettings);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    console.log('💾 [StorageService] Проверка сохранения через задержку:', parsed);
+                } else {
+                    console.error('❌ [StorageService] Данные не сохранились!');
+                }
+            }, 10);
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при сохранении настроек:', error);
+        }
+    }
+
+    /**
+     * Загрузка настроек игры "Состав числа"
+     */
+    loadCompositionSettings() {
+        try {
+            const settings = localStorage.getItem(this.keys.compositionSettings);
+            console.log('📖 [StorageService] Сырые данные из localStorage:', settings);
+            
+            if (settings) {
+                const parsedSettings = JSON.parse(settings);
+                console.log('📖 [StorageService] Настройки Состав числа загружены:', parsedSettings);
+                
+                // Проверяем, что все необходимые поля присутствуют
+                if (parsedSettings.minNumber && parsedSettings.maxNumber && parsedSettings.repetitions) {
+                    console.log('📖 [StorageService] Все поля присутствуют:', {
+                        minNumber: parsedSettings.minNumber,
+                        maxNumber: parsedSettings.maxNumber,
+                        repetitions: parsedSettings.repetitions
+                    });
+                    return parsedSettings;
+                } else {
+                    console.log('📖 [StorageService] Не все поля присутствуют в сохраненных настройках');
+                    return null;
+                }
+            } else {
+                console.log('📖 [StorageService] Нет сохраненных настроек');
+            }
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при загрузке настроек:', error);
+        }
+        return null;
+    }
+
+    /**
+     * Сохранение результата игры "Состав числа"
+     */
+    saveCompositionGame(gameData) {
+        try {
+            const existingGames = this.loadCompositionGames();
+            existingGames.push(gameData);
+            localStorage.setItem(this.keys.compositionGames, JSON.stringify(existingGames));
+            console.log('💾 [StorageService] Результат игры Состав числа сохранен');
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при сохранении результата игры:', error);
+        }
+    }
+
+    /**
+     * Загрузка истории игр "Состав числа"
+     */
+    loadCompositionGames() {
+        try {
+            const games = localStorage.getItem(this.keys.compositionGames);
+            return games ? JSON.parse(games) : [];
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка при загрузке истории игр:', error);
             return [];
         }
     }
@@ -321,27 +467,66 @@ class StorageService {
      */
     deleteGameById(gameId) {
         try {
-            const history = this.loadGameHistory();
-            const initialLength = history.length;
+            let deleted = false;
             
-            // Фильтруем игры, исключая игру с указанным ID
+            // Пробуем удалить из обычных игр
+            const history = this.loadGameHistory();
+            const initialHistoryLength = history.length;
             const filteredHistory = history.filter(game => game.id !== gameId);
             
-            if (filteredHistory.length === initialLength) {
-                console.log('⚠️ [StorageService] Игра с ID', gameId, 'не найдена');
+            if (filteredHistory.length < initialHistoryLength) {
+                localStorage.setItem(this.keys.gameHistory, JSON.stringify(filteredHistory));
+                console.log('🗑️ [StorageService] Обычная игра с ID', gameId, 'удалена');
+                deleted = true;
+            }
+            
+            // Пробуем удалить из игр "Состав числа"
+            const compositionHistory = this.loadCompositionGames();
+            const initialCompositionLength = compositionHistory.length;
+            const filteredCompositionHistory = compositionHistory.filter(game => game.id !== gameId);
+            
+            if (filteredCompositionHistory.length < initialCompositionLength) {
+                localStorage.setItem(this.keys.compositionGames, JSON.stringify(filteredCompositionHistory));
+                console.log('🗑️ [StorageService] Игра "Состав числа" с ID', gameId, 'удалена');
+                deleted = true;
+            }
+            
+            if (!deleted) {
+                console.log('⚠️ [StorageService] Игра с ID', gameId, 'не найдена ни в обычных играх, ни в играх "Состав числа"');
                 return false;
             }
             
-            // Сохраняем обновленную историю
-            localStorage.setItem(this.keys.gameHistory, JSON.stringify(filteredHistory));
-            
-            console.log('🗑️ [StorageService] Игра с ID', gameId, 'удалена');
-            console.log('📊 [StorageService] Игр в истории:', filteredHistory.length, 'из', initialLength);
-            
+            console.log('✅ [StorageService] Игра успешно удалена');
             return true;
         } catch (error) {
             console.error('❌ [StorageService] Ошибка удаления игры:', error);
             return false;
+        }
+    }
+
+    /**
+     * Сохранение текущего экрана
+     */
+    saveCurrentScreen(screenId) {
+        try {
+            localStorage.setItem(this.keys.currentScreen, screenId);
+            console.log('💾 [StorageService] Текущий экран сохранен:', screenId);
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка сохранения текущего экрана:', error);
+        }
+    }
+
+    /**
+     * Загрузка текущего экрана
+     */
+    loadCurrentScreen() {
+        try {
+            const screenId = localStorage.getItem(this.keys.currentScreen);
+            console.log('📖 [StorageService] Текущий экран загружен:', screenId);
+            return screenId;
+        } catch (error) {
+            console.error('❌ [StorageService] Ошибка загрузки текущего экрана:', error);
+            return null;
         }
     }
 }
