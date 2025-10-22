@@ -1294,6 +1294,14 @@ h3 {
     font-size: 0.9em;
 }
 
+/* Стили для информации об оставшихся примерах */
+.remaining-info {
+    margin-left: 20px;
+    color: var(--accent-color);
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
 .current-number {
     display: flex;
     align-items: center;

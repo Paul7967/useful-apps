@@ -19,6 +19,8 @@ class CompositionGameScreen extends BaseScreen {
         this.correctAnswers = 0;
         this.incorrectAnswers = 0;
         this.wrongExamples = [];
+        this.totalExamples = 0; // Общее количество примеров
+        this.remainingExamples = 0; // Количество оставшихся примеров
     }
 
     /**
@@ -85,10 +87,38 @@ class CompositionGameScreen extends BaseScreen {
         // Перемешиваем числа для случайного порядка
         this.shuffleArray(this.numberRange);
         
+        // Рассчитываем общее количество примеров по формуле: ((a1-a2)/2+1)*(a2-a1+1)*n
+        this.totalExamples = this.calculateTotalExamples(min, max, this.repetitions);
+        this.remainingExamples = this.totalExamples;
+        
         console.log('🔢 [CompositionGameScreen] Диапазон чисел:', this.numberRange);
         console.log('🔢 [CompositionGameScreen] Исходный диапазон:', this.originalRange);
         console.log('🔢 [CompositionGameScreen] Количество повторений:', this.repetitions);
         console.log('🔢 [CompositionGameScreen] Всего чисел:', this.numberRange.length);
+        console.log('🔢 [CompositionGameScreen] Общее количество примеров:', this.totalExamples);
+    }
+
+    /**
+     * Расчет общего количества примеров по формуле: ((a2-a1)/2+1)*(a2-a1+1)*n
+     */
+    calculateTotalExamples(min, max, repetitions) {
+        const rangeSize = max - min + 1;
+        const examplesPerNumber = (max + min) / 2 + 1;
+        const totalExamples = examplesPerNumber * rangeSize * repetitions;
+        
+        console.log({rangeSize, examplesPerNumber, totalExamples});
+        
+
+        console.log('🧮 [CompositionGameScreen] Расчет примеров:', {
+            min: min,
+            max: max,
+            repetitions: repetitions,
+            rangeSize: rangeSize,
+            examplesPerNumber: examplesPerNumber,
+            totalExamples: totalExamples
+        });
+        
+        return totalExamples;
     }
 
     /**
@@ -100,6 +130,7 @@ class CompositionGameScreen extends BaseScreen {
         this.incorrectAnswers = 0;
         this.wrongExamples = [];
         this.gameStartTime = Date.now();
+        this.remainingExamples = this.totalExamples;
         this.currentNumberIndex = 0; // Сбрасываем индекс
         this.currentRepetition = 1; // Начинаем с первого повторения
         
@@ -109,6 +140,9 @@ class CompositionGameScreen extends BaseScreen {
         
         // Устанавливаем начальное значение повторения
         this.setText('currentRepetition', this.currentRepetition);
+        
+        // Устанавливаем начальное значение оставшихся примеров
+        this.setText('remainingExamples', this.remainingExamples);
         
         // Запускаем таймер
         this.timerService.start();
@@ -258,14 +292,21 @@ class CompositionGameScreen extends BaseScreen {
             // Убираем из выбранных
             this.selectedButtons.delete(index);
             button.classList.remove('selected');
+            // Увеличиваем количество оставшихся примеров
+            this.remainingExamples++;
         } else {
             // Добавляем в выбранные
             this.selectedButtons.add(index);
             button.classList.add('selected');
+            // Уменьшаем количество оставшихся примеров
+            this.remainingExamples--;
         }
         
-        // Обновляем счетчик
+        // Обновляем счетчики
         this.setText('selectedCount', this.selectedButtons.size);
+        this.setText('remainingExamples', this.remainingExamples);
+        
+        console.log('🔢 [CompositionGameScreen] Оставшихся примеров:', this.remainingExamples);
     }
 
     /**
