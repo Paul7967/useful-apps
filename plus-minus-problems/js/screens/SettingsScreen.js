@@ -49,7 +49,13 @@ class SettingsScreen extends BaseScreen {
             }
         });
 
+        this.addEventListener('minNumber', 'change', () => {
+            this.validateNumberRange();
+            this.saveGameSettings();
+        });
+
         this.addEventListener('maxNumber', 'change', () => {
+            this.validateNumberRange();
             this.saveGameSettings();
         });
 
@@ -102,6 +108,7 @@ class SettingsScreen extends BaseScreen {
         
         // Загружаем настройки игры
         const settings = this.storageService.loadGameSettings();
+        this.setValue('minNumber', settings.minNumber || 1);
         this.setValue('maxNumber', settings.maxNumber);
         this.setValue('examplesCount', settings.examplesCount);
         
@@ -111,6 +118,11 @@ class SettingsScreen extends BaseScreen {
             operationRadio.checked = true;
         }
         
+        // Проверяем валидность диапазона после загрузки
+        setTimeout(() => {
+            this.validateNumberRange();
+        }, 0);
+        
         console.log('📋 [SettingsScreen] Настройки загружены:', settings);
     }
 
@@ -119,6 +131,7 @@ class SettingsScreen extends BaseScreen {
      */
     saveGameSettings() {
         const settings = {
+            minNumber: parseInt(this.getValue('minNumber')) || 1,
             maxNumber: parseInt(this.getValue('maxNumber')) || 10,
             examplesCount: parseInt(this.getValue('examplesCount')) || 5,
             operationType: document.querySelector('input[name="operationType"]:checked')?.value || 'addition'
@@ -126,6 +139,27 @@ class SettingsScreen extends BaseScreen {
         
         this.storageService.saveGameSettings(settings);
         console.log('💾 [SettingsScreen] Настройки игры сохранены:', settings);
+    }
+
+    /**
+     * Валидация диапазона чисел
+     */
+    validateNumberRange() {
+        const minNumber = parseInt(this.getValue('minNumber')) || 1;
+        const maxNumber = parseInt(this.getValue('maxNumber')) || 10;
+        const errorElement = document.getElementById('numberRangeError');
+        
+        if (minNumber >= maxNumber - 5) {
+            if (errorElement) {
+                errorElement.style.display = 'block';
+            }
+            return false;
+        } else {
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+            return true;
+        }
     }
 
     /**
@@ -165,10 +199,11 @@ class SettingsScreen extends BaseScreen {
         console.log('🎮 [SettingsScreen] Запуск игры');
         
         // Валидация настроек
+        const minNumber = parseInt(this.getValue('minNumber')) || 1;
         const maxNumber = parseInt(this.getValue('maxNumber'));
         const examplesCount = parseInt(this.getValue('examplesCount'));
         
-        if (maxNumber < 1 || examplesCount < 1) {
+        if (minNumber < 1 || maxNumber < 1 || examplesCount < 1) {
             alert('Пожалуйста, введите корректные значения (больше 0)');
             return;
         }
@@ -180,6 +215,13 @@ class SettingsScreen extends BaseScreen {
         
         if (examplesCount > 300) {
             alert('Количество примеров не должно превышать 300');
+            return;
+        }
+        
+        // Проверка диапазона: минимальное число должно быть меньше максимального более чем на 5
+        if (minNumber >= maxNumber - 5) {
+            alert('Минимальное число должно быть меньше максимального более чем на 5');
+            this.validateNumberRange();
             return;
         }
         
@@ -218,6 +260,7 @@ class SettingsScreen extends BaseScreen {
     getCurrentSettings() {
         return {
             playerName: this.getValue('playerNameInput') || 'Игрок',
+            minNumber: parseInt(this.getValue('minNumber')) || 1,
             maxNumber: parseInt(this.getValue('maxNumber')) || 10,
             examplesCount: parseInt(this.getValue('examplesCount')) || 5,
             operationType: document.querySelector('input[name="operationType"]:checked')?.value || 'addition'
@@ -230,6 +273,9 @@ class SettingsScreen extends BaseScreen {
     setSettings(settings) {
         if (settings.playerName) {
             this.setValue('playerNameInput', settings.playerName);
+        }
+        if (settings.minNumber !== undefined) {
+            this.setValue('minNumber', settings.minNumber);
         }
         if (settings.maxNumber) {
             this.setValue('maxNumber', settings.maxNumber);
@@ -253,6 +299,7 @@ class SettingsScreen extends BaseScreen {
     resetToDefaults() {
         const defaultSettings = {
             playerName: '',
+            minNumber: 1,
             maxNumber: 10,
             examplesCount: 5,
             operationType: 'addition'
