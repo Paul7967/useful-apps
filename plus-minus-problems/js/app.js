@@ -205,6 +205,7 @@ class MathApp {
     getGameSettings() {
         return this.gameSettings || {
             playerName: 'Игрок',
+            minNumber: 1,
             maxNumber: 10,
             examplesCount: 5,
             operationType: 'addition'

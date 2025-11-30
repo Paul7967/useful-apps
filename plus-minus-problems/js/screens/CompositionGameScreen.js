@@ -106,9 +106,6 @@ class CompositionGameScreen extends BaseScreen {
         const examplesPerNumber = (max + min) / 2 + 1;
         const totalExamples = examplesPerNumber * rangeSize * repetitions;
         
-        console.log({rangeSize, examplesPerNumber, totalExamples});
-        
-
         console.log('🧮 [CompositionGameScreen] Расчет примеров:', {
             min: min,
             max: max,

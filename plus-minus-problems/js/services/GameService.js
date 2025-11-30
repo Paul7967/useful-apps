@@ -8,6 +8,7 @@ class GameService {
         this.score = 0;
         this.examples = [];
         this.wrongExamples = [];
+        this.minNumber = 1;
         this.maxNumber = 10;
         this.totalExamples = 5;
         this.operationType = 'addition';
@@ -19,6 +20,7 @@ class GameService {
     initGame(settings) {
         console.log('🎮 [GameService] Инициализация игры с настройками:', settings);
         
+        this.minNumber = settings.minNumber || 1;
         this.maxNumber = settings.maxNumber || 10;
         this.totalExamples = settings.examplesCount || 5;
         this.operationType = settings.operationType || 'addition';
@@ -91,11 +93,28 @@ class GameService {
      */
     generateAdditionExample() {
         console.log('🎲 [GameService] Генерируем пример на сложение');
-        // Для сложения: оба слагаемых и сумма не должны превышать maxNumber
-        const a = Math.floor(Math.random() * this.maxNumber) + 1;
+        // Для сложения: оба слагаемых должны быть в диапазоне [minNumber, maxNumber]
+        // сумма не должна превышать maxNumber
+        // и результат должен быть >= minNumber
+        // a может быть от minNumber до (maxNumber - minNumber), чтобы b могло быть >= minNumber
+        const maxA = this.maxNumber - this.minNumber;
+        const minA = this.minNumber;
+        const rangeA = maxA - minA + 1;
+        const a = Math.floor(Math.random() * rangeA) + minA;
+        // b может быть от minNumber до (maxNumber - a)
         const maxB = this.maxNumber - a;
-        const b = Math.floor(Math.random() * maxB) + 1;
+        const minB = this.minNumber;
+        const b = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
         const result = a + b;
+        
+        // Проверка: результат должен быть >= minNumber
+        // Если a >= minNumber и b >= minNumber, то result >= 2*minNumber >= minNumber (для minNumber >= 1)
+        // Но для надежности проверяем явно
+        if (result < this.minNumber) {
+            console.warn(`⚠️ [GameService] Результат ${result} меньше minNumber ${this.minNumber}, перегенерируем`);
+            // Перегенерируем пример
+            return this.generateAdditionExample();
+        }
         
         console.log(`🎲 [GameService] Сложение: a=${a}, b=${b}, result=${result}`);
         
@@ -114,30 +133,77 @@ class GameService {
      */
     generateSubtractionExample(hasZeroResult = false) {
         console.log('🎲 [GameService] Генерируем пример на вычитание');
-        // Для вычитания: уменьшаемое не должно превышать maxNumber
-        let a = Math.floor(Math.random() * this.maxNumber) + 1;
+        // Для вычитания: 
+        // - уменьшаемое должно быть в диапазоне [minNumber, maxNumber]
+        // - вычитаемое должно быть >= minNumber и < уменьшаемого
+        // - результат должен быть >= minNumber
+        // Это означает, что a должно быть >= 2*minNumber (чтобы a - b >= minNumber при b >= minNumber)
+        const minA = 2 * this.minNumber;
+        const maxA = this.maxNumber;
+        const rangeA = maxA - minA + 1;
+        
+        if (rangeA <= 0) {
+            console.error('❌ [GameService] Невозможно сгенерировать пример: диапазон для уменьшаемого пуст');
+            // Fallback: используем минимально возможные значения
+            const a = Math.max(2 * this.minNumber, this.minNumber + 1);
+            const b = this.minNumber;
+            const result = a - b;
+            return {
+                type: 'subtraction',
+                a: a,
+                b: b,
+                result: result,
+                text: `${a} - ${b} = `,
+                correctAnswer: result
+            };
+        }
+        
+        let a = Math.floor(Math.random() * rangeA) + minA;
         console.log(`🎲 [GameService] Уменьшаемое a = ${a}`);
         
-        // Вычитаемое должно быть меньше уменьшаемого
-        let b = Math.floor(Math.random() * a) + 1;
+        // Вычитаемое должно быть >= minNumber и <= (a - minNumber), чтобы результат >= minNumber
+        const minB = this.minNumber;
+        const maxB = a - this.minNumber; // Чтобы результат был >= minNumber
+        // Проверяем, что диапазон для b валиден
+        if (maxB < minB) {
+            console.warn(`⚠️ [GameService] Некорректный диапазон для b: maxB=${maxB} < minB=${minB}, перегенерируем a`);
+            return this.generateSubtractionExample(hasZeroResult);
+        }
+        
+        let b = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
         let result = a - b;
         console.log(`🎲 [GameService] Первоначальные значения: a=${a}, b=${b}, result=${result}`);
+        
+        // Проверка: результат должен быть >= minNumber
+        if (result < this.minNumber) {
+            console.warn(`⚠️ [GameService] Результат ${result} меньше minNumber ${this.minNumber}, корректируем`);
+            // Корректируем b, чтобы результат был >= minNumber
+            b = Math.min(b, a - this.minNumber);
+            result = a - b;
+            console.log(`🎲 [GameService] Скорректированные значения: a=${a}, b=${b}, result=${result}`);
+        }
         
         // Если результат 0 уже был в раунде, избегаем его
         if (hasZeroResult && result === 0) {
             console.log('🎲 [GameService] Результат 0, пытаемся избежать');
-            // Если a = 1, то результат всегда будет 0, поэтому генерируем новое a
-            if (a === 1) {
-                console.log('🎲 [GameService] a=1, генерируем новое a');
-                a = Math.floor(Math.random() * this.maxNumber) + 2; // Минимум 2
-                console.log(`🎲 [GameService] Новое a = ${a}`);
+            // Увеличиваем a, чтобы гарантировать результат >= minNumber
+            if (a < 2 * this.minNumber + 1) {
+                a = Math.max(2 * this.minNumber + 1, minA);
+                console.log(`🎲 [GameService] Увеличиваем a до ${a}`);
             }
-            // Генерируем заново, пока не получим результат > 0
+            // Пересчитываем диапазон для b
+            const newMinB = this.minNumber;
+            const newMaxB = a - this.minNumber;
+            if (newMaxB < newMinB) {
+                console.warn(`⚠️ [GameService] Некорректный диапазон после увеличения a, перегенерируем`);
+                return this.generateSubtractionExample(hasZeroResult);
+            }
+            // Генерируем заново, пока не получим результат >= minNumber и > 0
             let attempts = 0;
             do {
                 attempts++;
                 console.log(`🎲 [GameService] Попытка избежать 0, итерация ${attempts}`);
-                b = Math.floor(Math.random() * a) + 1;
+                b = Math.floor(Math.random() * (newMaxB - newMinB + 1)) + newMinB;
                 result = a - b;
                 console.log(`🎲 [GameService] Попытка ${attempts}: a=${a}, b=${b}, result=${result}`);
                 
@@ -145,8 +211,14 @@ class GameService {
                     console.error('🚨 [GameService] ПРЕВЫШЕНО КОЛИЧЕСТВО ПОПЫТОК! Возможен бесконечный цикл!');
                     break;
                 }
-            } while (result === 0);
+            } while (result === 0 || result < this.minNumber);
             console.log(`🎲 [GameService] Цикл избежания 0 завершен за ${attempts} попыток`);
+        }
+        
+        // Финальная проверка: результат должен быть >= minNumber
+        if (result < this.minNumber) {
+            console.warn(`⚠️ [GameService] Результат ${result} все еще меньше minNumber ${this.minNumber}, перегенерируем`);
+            return this.generateSubtractionExample(hasZeroResult);
         }
         
         return {

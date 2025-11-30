@@ -1,7 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
+function getVersion() {
+    // Читаем version.js и извлекаем версию
+    const versionContent = fs.readFileSync('version.js', 'utf8');
+    const versionMatch = versionContent.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+    if (versionMatch && versionMatch[1]) {
+        return versionMatch[1];
+    }
+    throw new Error('Не удалось извлечь версию из version.js');
+}
+
 function bundleHTML() {
+    // Получаем версию
+    const version = getVersion();
+    console.log(`📦 Версия приложения: ${version}`);
+    
     // Читаем основной HTML файл
     let html = fs.readFileSync('index.html', 'utf8');
     
@@ -17,9 +31,12 @@ function bundleHTML() {
         return `<script>${jsContent}</script>`;
     });
     
+    // Формируем имя файла с версией
+    const outputFileName = `dist/math-problems-${version}.html`;
+    
     // Сохраняем результат
-    fs.writeFileSync('dist/math-problems.html', html);
-    console.log('✅ Создан standalone файл: dist/math-problems.html');
+    fs.writeFileSync(outputFileName, html);
+    console.log(`✅ Создан standalone файл: ${outputFileName}`);
 }
 
 bundleHTML();

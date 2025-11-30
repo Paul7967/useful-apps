@@ -43,6 +43,7 @@ class StorageService {
     saveGameSettings(settings) {
         try {
             const settingsData = {
+                minNumber: settings.minNumber || 1,
                 maxNumber: settings.maxNumber || 10,
                 examplesCount: settings.examplesCount || 5,
                 operationType: settings.operationType || 'addition',
@@ -75,6 +76,7 @@ class StorageService {
         
         // Возвращаем настройки по умолчанию
         const defaultSettings = {
+            minNumber: 1,
             maxNumber: 10,
             examplesCount: 5,
             operationType: 'addition'
